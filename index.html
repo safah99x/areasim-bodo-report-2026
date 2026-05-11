@@ -18,8 +18,12 @@
       /* Surfaces */
       --bg-cream:    #FAF7F2;
       --bg-white:    #FFFFFF;
-      --bg-mint:     #EDF5EF;
-      --bg-sand:     #F5EFE3;
+      --bg-mint:     #E8F1EC;
+      --bg-sand:     #F5ECDA;
+      --bg-lavender: #ECE8F4;
+      --bg-sky:      #E4ECF6;
+      --bg-coral:    #FBEBE4;
+      --bg-teal:     #DEEDE7;
 
       /* Green family (primary brand) */
       --g-dark:      #1F5C44;
@@ -30,7 +34,7 @@
       /* Amber family (accent) */
       --a-mid:       #C99A3D;
       --a-soft:      #E8C46A;
-      --a-pale:      #F5EBD4;
+      --a-pale:      #F1DFB4;
 
       /* Neutrals */
       --ink:         #15201B;
@@ -39,11 +43,22 @@
       --line:        #E5DECE;
       --line-soft:   #EFEADD;
 
-      /* Data palette */
+      /* Data palette — pulled from screenshot skyline */
       --d-rose:      #C76B6B;
-      --d-plum:      #8A6FB0;
-      --d-sky:       #5B9BD5;
+      --d-coral:     #D77F62;
+      --d-plum:      #8E84C2;
+      --d-lavender:  #B6AED9;
+      --d-sky:       #6E9BCC;
+      --d-powder:    #A8C0DE;
       --d-rust:      #B57040;
+      --d-teal:      #3F8C76;
+      --d-mint:      #6FAE96;
+
+      /* Pale tints for borders / soft fills */
+      --p-plum:      #D9D2EC;
+      --p-sky:       #CFDDEE;
+      --p-coral:     #F2D6CC;
+      --p-teal:      #C9DFD6;
 
       /* System */
       --shadow-sm:   0 1px 2px rgba(31,92,68,0.05);
@@ -145,10 +160,14 @@
     .si { position:relative; z-index:2; max-width:1400px; margin:0 auto; width:100%; }
 
     /* Section backgrounds */
-    .bg-cream { background:var(--bg-cream); }
-    .bg-white { background:var(--bg-white); }
-    .bg-mint  { background:var(--bg-mint); }
-    .bg-sand  { background:var(--bg-sand); }
+    .bg-cream    { background:var(--bg-cream); }
+    .bg-white    { background:var(--bg-white); }
+    .bg-mint     { background:var(--bg-mint); }
+    .bg-sand     { background:var(--bg-sand); }
+    .bg-lavender { background:var(--bg-lavender); }
+    .bg-sky      { background:var(--bg-sky); }
+    .bg-coral    { background:var(--bg-coral); }
+    .bg-teal     { background:var(--bg-teal); }
 
     /* Subtle background grid pattern */
     .grid-pattern::before {
@@ -259,6 +278,30 @@
       background:var(--bg-sand);
       border-color:var(--a-pale);
     }
+    .callout.on-lavender {
+      background:var(--bg-lavender);
+      border-color:var(--p-plum);
+    }
+    .callout.on-lavender .c-icon  { background:var(--d-plum); }
+    .callout.on-lavender strong   { color:var(--d-plum); }
+    .callout.on-sky {
+      background:var(--bg-sky);
+      border-color:var(--p-sky);
+    }
+    .callout.on-sky .c-icon       { background:var(--d-sky); }
+    .callout.on-sky strong        { color:var(--d-sky); }
+    .callout.on-coral {
+      background:var(--bg-coral);
+      border-color:var(--p-coral);
+    }
+    .callout.on-coral .c-icon     { background:var(--d-coral); }
+    .callout.on-coral strong      { color:var(--d-coral); }
+    .callout.on-teal {
+      background:var(--bg-teal);
+      border-color:var(--p-teal);
+    }
+    .callout.on-teal .c-icon      { background:var(--d-teal); }
+    .callout.on-teal strong       { color:var(--d-teal); }
     .callout .c-icon {
       flex-shrink:0;
       width:24px; height:24px;
@@ -972,16 +1015,22 @@
       top:0; left:0; right:0; height:3px;
       background:var(--g-dark);
     }
-    .stat-card.amber::before { background:var(--a-mid); }
-    .stat-card.plum::before  { background:var(--d-plum); }
-    .stat-card.rose::before  { background:var(--d-rose); }
-    .stat-card.sky::before   { background:var(--d-sky); }
-    .stat-card.rust::before  { background:var(--d-rust); }
-    .stat-card.amber .val { color:var(--a-mid); }
-    .stat-card.plum  .val { color:var(--d-plum); }
-    .stat-card.rose  .val { color:var(--d-rose); }
-    .stat-card.sky   .val { color:var(--d-sky); }
-    .stat-card.rust  .val { color:var(--d-rust); }
+    .stat-card.amber::before    { background:var(--a-mid); }
+    .stat-card.plum::before     { background:var(--d-plum); }
+    .stat-card.rose::before     { background:var(--d-rose); }
+    .stat-card.sky::before      { background:var(--d-sky); }
+    .stat-card.rust::before     { background:var(--d-rust); }
+    .stat-card.coral::before    { background:var(--d-coral); }
+    .stat-card.teal::before     { background:var(--d-teal); }
+    .stat-card.lavender::before { background:var(--d-plum); }
+    .stat-card.amber    .val { color:var(--a-mid); }
+    .stat-card.plum     .val { color:var(--d-plum); }
+    .stat-card.rose     .val { color:var(--d-rose); }
+    .stat-card.sky      .val { color:var(--d-sky); }
+    .stat-card.rust     .val { color:var(--d-rust); }
+    .stat-card.coral    .val { color:var(--d-coral); }
+    .stat-card.teal     .val { color:var(--d-teal); }
+    .stat-card.lavender .val { color:var(--d-plum); }
 
     /* ──────────────── HEATMAP ──────────────── */
     .heatmap-wrap {
@@ -1403,13 +1452,13 @@
 <!-- ════════════════════════════════════════════════════
      03 · BUILDING OVERVIEW
 ════════════════════════════════════════════════════ -->
-<section class="section bg-cream" id="s3" data-label="Building">
+<section class="section bg-lavender" id="s3" data-label="Building">
   <div class="glow" style="width:400px;height:400px;background:rgba(245,235,212,0.4);right:-100px;top:30%;"></div>
 
   <div class="si">
     <div class="eyebrow ai">
-      <span class="pip"></span>
-      <span class="num">02</span>
+      <span class="pip" style="background:var(--d-plum);"></span>
+      <span class="num" style="color:var(--d-plum);">02</span>
       <span>The building, at a glance</span>
     </div>
 
@@ -1463,7 +1512,7 @@
       </div>
     </div>
 
-    <div class="callout ai" style="margin-top:48px;">
+    <div class="callout on-lavender ai" style="margin-top:48px;">
       <span class="c-icon" style="background:var(--a-mid);">
         <svg viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="2"><circle cx="6.5" cy="6.5" r="3"/><circle cx="6.5" cy="6.5" r="0.8" fill="currentColor"/></svg>
       </span>
@@ -1687,11 +1736,11 @@
 <!-- ════════════════════════════════════════════════════
      06 · THE SEAT REALITY
 ════════════════════════════════════════════════════ -->
-<section class="section bg-white" id="s6" data-label="Seat Reality">
+<section class="section bg-sky" id="s6" data-label="Seat Reality">
   <div class="si">
     <div class="eyebrow ai">
-      <span class="pip"></span>
-      <span class="num">05</span>
+      <span class="pip" style="background:var(--d-sky);"></span>
+      <span class="num" style="color:var(--d-sky);">05</span>
       <span>The seat reality</span>
     </div>
 
@@ -1699,7 +1748,7 @@
       <div>
         <h2 class="h-2 ai d1">
           Even when your team shows up,<br>
-          <span class="italic">most seats stay empty.</span>
+          <span class="italic" style="color:var(--d-sky);">most seats stay empty.</span>
         </h2>
         <div class="stat-display ai d2" style="margin-top:32px;color:var(--a-mid);">79<span class="unit">%</span></div>
         <p class="ai d3" style="font-size:18px;color:var(--ink-2);margin-top:12px;">of all seats sat empty at any given moment.</p>
@@ -1820,7 +1869,7 @@
 <!-- ════════════════════════════════════════════════════
      07 · ROOM TYPES
 ════════════════════════════════════════════════════ -->
-<section class="section bg-white" id="s8" data-label="Room Types">
+<section class="section bg-coral" id="s8" data-label="Room Types">
   <div class="si">
     <div class="eyebrow ai">
       <span class="pip" style="background:var(--d-plum);"></span>
@@ -1856,7 +1905,7 @@
           </div>
         </div>
 
-        <div class="callout ai" style="margin-top:24px;">
+        <div class="callout on-coral ai" style="margin-top:24px;">
           <span class="c-icon" style="background:var(--d-plum);">
             <svg viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="4" height="4" rx="0.5"/><rect x="7" y="2" width="4" height="4" rx="0.5"/><rect x="2" y="7" width="4" height="4" rx="0.5"/><rect x="7" y="7" width="4" height="4" rx="0.5"/></svg>
           </span>
@@ -1891,7 +1940,7 @@
         <canvas id="chartRoomUtil" height="160"></canvas>
       </div>
 
-      <div class="callout ai" style="margin-top:28px;">
+      <div class="callout on-coral ai" style="margin-top:28px;">
         <span class="c-icon" style="background:var(--d-rust);">
           <svg viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 11l3-3 3 2 4-4"/><path d="M11 6V3h-3"/></svg>
         </span>
@@ -2080,19 +2129,19 @@
 <!-- ════════════════════════════════════════════════════
      11 · SPACE EFFICIENCY SCORE
 ════════════════════════════════════════════════════ -->
-<section class="section bg-cream" id="s11" data-label="Score">
+<section class="section bg-teal" id="s11" data-label="Score">
   <div class="glow" style="width:500px;height:500px;background:rgba(245,235,212,0.4);right:-200px;bottom:-200px;"></div>
 
   <div class="si">
     <div class="eyebrow ai">
-      <span class="pip"></span>
-      <span class="num">10</span>
+      <span class="pip" style="background:var(--d-teal);"></span>
+      <span class="num" style="color:var(--d-teal);">10</span>
       <span>Space efficiency score</span>
     </div>
 
     <h2 class="h-1 ai d1">
       How efficiently<br>
-      <span class="italic">is your office run?</span>
+      <span class="italic" style="color:var(--d-teal);">is your office run?</span>
     </h2>
 
     <div class="score-wrap">
@@ -2242,19 +2291,19 @@
 <!-- ════════════════════════════════════════════════════
      11 · RECOMMENDATIONS
 ════════════════════════════════════════════════════ -->
-<section class="section bg-cream" id="s13" data-label="Recommendations">
+<section class="section bg-sand" id="s13" data-label="Recommendations">
   <div class="glow" style="width:500px;height:500px;background:rgba(184,212,197,0.3);left:-200px;bottom:-200px;"></div>
 
   <div class="si">
     <div class="eyebrow ai">
-      <span class="pip"></span>
-      <span class="num">12</span>
+      <span class="pip" style="background:var(--a-mid);"></span>
+      <span class="num" style="color:var(--a-mid);">12</span>
       <span>Where to start</span>
     </div>
 
     <h2 class="h-1 ai d1">
       Three moves<br>
-      <span class="italic">to make this quarter.</span>
+      <span class="italic" style="color:var(--a-mid);">to make this quarter.</span>
     </h2>
     <p class="lead ai d2" style="margin-top:24px;">
       Plenty more could follow, but these three are the highest-leverage places to begin.
@@ -2544,7 +2593,7 @@ if (seatCtx) {
 // Room donut
 const roomData = [
   { name: 'Quest Zones',       count: 67, color: '#1F5C44' },
-  { name: 'Other Rooms',       count: 54, color: '#2D7A5C' },
+  { name: 'Other Rooms',       count: 54, color: '#3F8C76' },
   { name: 'Open Landscapes',   count: 45, color: '#C99A3D' },
   { name: 'Work Cafés',        count: 34, color: '#B8D4C5' },
   { name: 'Meeting Rooms',     count: 26, color: '#E8C46A' },
@@ -2590,7 +2639,7 @@ const seatData = [
   { name: 'Quest Zones',       count: 240, color: '#1F5C44' },
   { name: 'Collaboration Café',count: 180, color: '#B8D4C5' },
   { name: 'Meeting Rooms',     count: 176, color: '#E8C46A' },
-  { name: 'Other Rooms',       count: 172, color: '#2D7A5C' },
+  { name: 'Other Rooms',       count: 172, color: '#3F8C76' },
   { name: 'Multi-room spaces', count:  68, color: '#5B9BD5' },
   { name: 'External Zones',    count:  63, color: '#8A6FB0' },
   { name: 'Dedicated Offices', count:  44, color: '#C76B6B' },
@@ -2632,7 +2681,7 @@ if (seatDonutCtx) {
 const utilData = [
   { name: 'Open landscape', use: 42, color: '#1F5C44' },
   { name: 'Collaboration café', use: 28, color: '#C99A3D' },
-  { name: 'External zones', use: 25, color: '#2D7A5C' },
+  { name: 'External zones', use: 25, color: '#3F8C76' },
   { name: 'Quest zones', use: 22, color: '#B8D4C5' },
   { name: 'Meeting rooms', use: 20, color: '#E8C46A' },
   { name: 'Multi-room spaces', use: 10, color: '#8A6FB0' },
