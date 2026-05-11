@@ -757,8 +757,11 @@
       margin-bottom:24px;
     }
     .insight-icon.amber { background:var(--a-pale); color:var(--a-mid); }
-    .insight-icon.plum  { background:#EFE6F2; color:var(--d-plum); }
+    .insight-icon.plum  { background:var(--p-plum); color:var(--d-plum); }
     .insight-icon.rose  { background:#F5E6E6; color:var(--d-rose); }
+    .insight-icon.sky   { background:var(--p-sky);  color:var(--d-sky); }
+    .insight-icon.teal  { background:var(--p-teal); color:var(--d-teal); }
+    .insight-icon.coral { background:var(--p-coral);color:var(--d-coral); }
 
     .insight-title {
       font-family:'Fraunces', serif;
@@ -1219,6 +1222,169 @@
       text-align:right;
     }
 
+    /* ──────────────── ABOUT / GLOSSARY / SCHEDULE ──────────────── */
+    .about-grid {
+      display:grid;
+      grid-template-columns: 1.05fr 1fr;
+      gap:56px;
+      margin-top:56px;
+    }
+    .about-grid h3 {
+      font-family:'Fraunces', serif;
+      font-size:22px; font-weight:400;
+      letter-spacing:-0.01em;
+      color:var(--ink);
+      margin-bottom:16px;
+    }
+    .about-grid p {
+      font-size:15px; line-height:1.7;
+      color:var(--ink-2);
+      max-width:520px;
+    }
+    .about-bullets {
+      list-style:none; padding:0; margin:0;
+    }
+    .about-bullets li {
+      display:flex; gap:14px;
+      padding:14px 0;
+      border-bottom:1px solid var(--line-soft);
+      font-size:14px; line-height:1.6;
+      color:var(--ink);
+    }
+    .about-bullets li:last-child { border-bottom:none; }
+    .about-bullets .ab-marker {
+      flex-shrink:0;
+      width:6px; height:6px; margin-top:8px;
+      border-radius:50%;
+      background:var(--d-plum);
+    }
+    .about-bullets.notes .ab-marker { background:var(--a-mid); }
+    .about-bullets li strong {
+      color:var(--ink); font-weight:600;
+    }
+
+    .schedule {
+      margin-top:72px;
+      background:var(--bg-white);
+      border:1px solid var(--line-soft);
+      border-radius:var(--radius);
+      padding:32px;
+      box-shadow:var(--shadow-sm);
+    }
+    .schedule-head {
+      display:flex; align-items:baseline; justify-content:space-between;
+      gap:16px; flex-wrap:wrap;
+      margin-bottom:24px;
+    }
+    .schedule-head h3 {
+      font-family:'Fraunces', serif;
+      font-size:24px; font-weight:400;
+      letter-spacing:-0.01em;
+      color:var(--ink); margin:0;
+    }
+    .schedule-head .note {
+      font-size:12px;
+      letter-spacing:0.06em; text-transform:uppercase;
+      color:var(--ink-3);
+    }
+    .schedule-table {
+      width:100%; border-collapse:collapse;
+      font-size:13px;
+    }
+    .schedule-table th,
+    .schedule-table td {
+      padding:14px 16px;
+      text-align:left;
+      vertical-align:top;
+      border-bottom:1px solid var(--line-soft);
+    }
+    .schedule-table thead th {
+      font-family:'Inter', sans-serif;
+      font-size:11px; font-weight:600;
+      letter-spacing:0.08em; text-transform:uppercase;
+      color:var(--ink-3);
+      border-bottom:1px solid var(--line);
+    }
+    .schedule-table tbody th {
+      width:118px;
+      font-weight:500; color:var(--ink);
+    }
+    .schedule-table tbody td {
+      font-family:'JetBrains Mono', monospace;
+      font-size:12px;
+      color:var(--ink-2);
+      letter-spacing:0.02em;
+    }
+    .schedule-table tbody tr:last-child th,
+    .schedule-table tbody tr:last-child td { border-bottom:none; }
+    .schedule-table td.empty {
+      color:var(--ink-3); font-style:italic;
+      font-family:'Fraunces', serif;
+    }
+
+    .glossary {
+      margin-top:40px;
+      background:var(--bg-white);
+      border:1px solid var(--line-soft);
+      border-radius:var(--radius);
+      padding:32px;
+      box-shadow:var(--shadow-sm);
+    }
+    .glossary h3 {
+      font-family:'Fraunces', serif;
+      font-size:24px; font-weight:400;
+      letter-spacing:-0.01em;
+      color:var(--ink);
+      margin:0 0 24px;
+    }
+    .glossary-list {
+      display:grid;
+      grid-template-columns:repeat(2, minmax(0, 1fr));
+      gap:0 48px;
+    }
+    .glossary-list dt {
+      font-family:'Inter', sans-serif;
+      font-size:13px; font-weight:600;
+      color:var(--g-dark);
+      margin-top:18px;
+    }
+    .glossary-list dt:first-of-type,
+    .glossary-list dt:nth-of-type(2) { margin-top:0; }
+    .glossary-list dd {
+      margin:6px 0 0;
+      font-size:13px; line-height:1.55;
+      color:var(--ink-2);
+    }
+
+    /* Highlights for summary stats */
+    .findings-extra {
+      display:grid;
+      grid-template-columns:repeat(2, minmax(0, 1fr));
+      gap:20px;
+      margin-top:32px;
+    }
+    .findings-extra .fx {
+      background:var(--bg-white);
+      border:1px solid var(--line-soft);
+      border-radius:var(--radius);
+      padding:22px 24px;
+      box-shadow:var(--shadow-sm);
+    }
+    .findings-extra .fx .fx-val {
+      font-family:'Fraunces', serif;
+      font-size:42px; font-weight:300;
+      letter-spacing:-0.02em;
+      line-height:1;
+      margin-bottom:8px;
+    }
+    .findings-extra .fx.coral .fx-val { color:var(--d-coral); }
+    .findings-extra .fx.plum  .fx-val { color:var(--d-plum); }
+    .findings-extra .fx .fx-lab {
+      font-size:14px; line-height:1.55;
+      color:var(--ink-2);
+    }
+    .findings-extra .fx .fx-lab strong { color:var(--ink); font-weight:600; }
+
     /* ──────────────── PRINT ──────────────── */
     @media print {
       .export-bar, #navdots, #topbar, .scroll-hint, #loader { display:none !important; }
@@ -1444,6 +1610,124 @@
         <div class="dates">15 to 22 May</div>
         <div class="note">21 snapshots, including a full Friday</div>
       </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ════════════════════════════════════════════════════
+     02.5 · ABOUT THIS REPORT
+════════════════════════════════════════════════════ -->
+<section class="section bg-sand" id="s2b" data-label="About">
+  <div class="glow" style="width:420px;height:420px;background:rgba(184,212,197,0.30);left:-160px;top:20%;"></div>
+
+  <div class="si">
+    <div class="eyebrow ai">
+      <span class="pip" style="background:var(--a-mid);"></span>
+      <span>Before you read on</span>
+    </div>
+
+    <h2 class="h-1 ai d1">
+      About this<br>
+      <span class="italic" style="color:var(--a-mid);">report.</span>
+    </h2>
+    <p class="lead ai d2" style="margin-top:24px;">
+      A short orientation: what this is, why companies commission it, and the assumptions you should keep in mind while reading the numbers that follow.
+    </p>
+
+    <div class="about-grid ai d3">
+      <div>
+        <h3>What this is</h3>
+        <p>
+          The AreaSim Counting Tool is a structured, on-foot study of how a building is actually used. Across fourteen days, our team conducts forty-six full sweeps of every room and zone &mdash; recording who is present, where, and for how long. The result is a measured picture of occupancy and capacity utilisation, room by room, hour by hour.
+        </p>
+
+        <h3 style="margin-top:36px;">Why companies commission it</h3>
+        <ul class="about-bullets">
+          <li><span class="ab-marker"></span><span><strong>Planning a new office building</strong> or sizing a relocation, with evidence on how the current portfolio is actually used.</span></li>
+          <li><span class="ab-marker"></span><span><strong>Refitting an existing space</strong> &mdash; turning underused floors and rooms into the kinds of spaces that earn their square metres.</span></li>
+          <li><span class="ab-marker"></span><span><strong>Calibrating meeting-room demand</strong> and right-sizing rooms to the way they are really booked, not the way the building was originally drawn.</span></li>
+          <li><span class="ab-marker"></span><span><strong>Identifying chronically under-used spaces</strong> before they show up as a budget conversation.</span></li>
+          <li><span class="ab-marker"></span><span><strong>Anchoring workspace decisions to evidence,</strong> not anecdote &mdash; a defensible baseline for leadership, finance, and HR.</span></li>
+        </ul>
+      </div>
+
+      <div>
+        <h3>Important to know</h3>
+        <ul class="about-bullets notes">
+          <li><span class="ab-marker"></span><span><strong>A single study is a single point in time.</strong> Patterns drift; rerunning the count every twelve to eighteen months keeps the picture honest.</span></li>
+          <li><span class="ab-marker"></span><span><strong>Seasonality and absence skew windows.</strong> Sick days, school holidays, and post-pandemic flex patterns can all quietly tilt a fortnight's numbers.</span></li>
+          <li><span class="ab-marker"></span><span><strong>Numbers are necessary, not sufficient.</strong> Acoustics, lighting, ventilation, and layout shape behaviour too &mdash; and won't show up in a chair count.</span></li>
+          <li><span class="ab-marker"></span><span><strong>Plan against today and tomorrow.</strong> The right footprint reflects both the organisation you have now and the one you expect in three years.</span></li>
+          <li><span class="ab-marker"></span><span><strong>Low usage is not a verdict.</strong> A quiet room is a question, not a failure &mdash; understand the why before redrawing the floor plan.</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="schedule ai d4">
+      <div class="schedule-head">
+        <h3>Daily registration schedule</h3>
+        <span class="note">46 observations &middot; 8&ndash;22 May 2026</span>
+      </div>
+      <table class="schedule-table">
+        <thead>
+          <tr>
+            <th>Day</th>
+            <th>Week 1 &mdash; 8 to 14 May</th>
+            <th>Week 2 &mdash; 15 to 22 May</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th>Monday</th>
+            <td>09:00 &middot; 11:00 &middot; 12:00 &middot; 13:30 &middot; 15:00</td>
+            <td>09:00 &middot; 09:30 &middot; 10:00 &middot; 10:30 &middot; 12:30 &middot; 13:30</td>
+          </tr>
+          <tr>
+            <th>Tuesday</th>
+            <td>08:30 &middot; 10:00 &middot; 11:00 &middot; 12:00 &middot; 13:00 &middot; 14:50 &middot; 15:30</td>
+            <td class="empty">No observations scheduled</td>
+          </tr>
+          <tr>
+            <th>Wednesday</th>
+            <td>08:30 &middot; 09:00 &middot; 10:00 &middot; 11:00 &middot; 12:30 &middot; 13:30 &middot; 14:30</td>
+            <td class="empty">No observations scheduled</td>
+          </tr>
+          <tr>
+            <th>Thursday</th>
+            <td>09:00 &middot; 09:30 &middot; 10:00 &middot; 10:30 &middot; 12:30 &middot; 13:30</td>
+            <td>09:00 &middot; 09:30 &middot; 10:00 &middot; 11:00 &middot; 12:30 &middot; 13:30</td>
+          </tr>
+          <tr>
+            <th>Friday</th>
+            <td class="empty">No observations scheduled</td>
+            <td>08:30 &middot; 09:30 &middot; 10:30 &middot; 11:30 &middot; 12:30 &middot; 13:30 &middot; 14:30 &middot; 15:30</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="glossary ai d5">
+      <h3>Glossary of key terms</h3>
+      <dl class="glossary-list">
+        <dt>Room type</dt>
+        <dd>The category used to classify a room or zone &mdash; open landscape, meeting room, quest zone, and so on.</dd>
+
+        <dt>Room name</dt>
+        <dd>The name of the specific room or zone being observed in the building.</dd>
+
+        <dt>Capacity</dt>
+        <dd>The number of seats available in a given room or zone when fully set up for use.</dd>
+
+        <dt>Capacity utilisation</dt>
+        <dd>A measure of how efficiently a room is used relative to its seating capacity, when occupied.</dd>
+
+        <dt>Average room usage</dt>
+        <dd>How often, on average, a room or zone is in active use across the observation window.</dd>
+
+        <dt>Average seat usage</dt>
+        <dd>How often, on average, individual seats within rooms are occupied during observations.</dd>
+      </dl>
     </div>
   </div>
 </section>
@@ -2283,6 +2567,33 @@
         <div class="insight-stat" style="color:var(--d-rose);">~40<span class="small">%</span></div>
         <p class="insight-desc">Friday attendance drops to around 40% of a normal weekday. You now have the evidence to formalize flexible work policies and, perhaps, negotiate reduced operating costs for the quietest days.</p>
       </div>
+      <div class="insight-card">
+        <div class="insight-icon sky">
+          <svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="6" width="16" height="11" rx="1"/><path d="M3 10h16M7 6V4M15 6V4"/></svg>
+        </div>
+        <div class="insight-title">Open-plan seats sit empty more than half the time.</div>
+        <div class="insight-stat" style="color:var(--d-sky);">59<span class="small">%</span></div>
+        <p class="insight-desc">Even your busiest type of space, the open landscape, runs at less than half capacity on average. 59% of those workstations are vacant at any given moment. The format that was meant to flex hardest is the one with the most room to give back.</p>
+      </div>
+      <div class="insight-card">
+        <div class="insight-icon coral">
+          <svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 19V8l7-5 7 5v11"/><path d="M9 19v-6h4v6"/></svg>
+        </div>
+        <div class="insight-title">More than a third of private offices were never used.</div>
+        <div class="insight-stat" style="color:var(--d-coral);">37<span class="small">%</span></div>
+        <p class="insight-desc">Across the fourteen-day window, 37% of dedicated offices saw zero recorded use. Not low use &mdash; no use. These are the easiest rooms to reassign, and the quietest signal that the old &quot;one person, one office&quot; model is no longer earning its keep.</p>
+      </div>
+    </div>
+
+    <div class="findings-extra ai d4" style="margin-top:32px;">
+      <div class="fx coral">
+        <div class="fx-val">4.8&times;</div>
+        <div class="fx-lab"><strong>Even at peak, there are 4.8 seats available for every person present.</strong> The building never gets close to full.</div>
+      </div>
+      <div class="fx plum">
+        <div class="fx-val">6.5&times;</div>
+        <div class="fx-lab"><strong>On an average day, that climbs to 6.5 seats per present employee.</strong> A small organisation's worth of empty chairs, every single day.</div>
+      </div>
     </div>
   </div>
 </section>
@@ -2815,7 +3126,34 @@ xmlns='http://www.w3.org/TR/REC-html40'>
 </style></head><body>
 <h1>AreaSim NEXT · Office Intelligence Report, 2026</h1>
 <p><b>Organization:</b> Bodø Municipality &nbsp; | &nbsp; <b>Period:</b> 8 to 22 May 2026 &nbsp; | &nbsp; <b>Snapshots:</b> 46</p>
-<p style="font-style:italic;color:#4A5950;font-size:12pt;margin-top:8pt;">The AreaSim Counting Tool has been through your building — read on to see what it found.</p>
+<p style="font-style:italic;color:#4A5950;font-size:12pt;margin-top:8pt;">The AreaSim Counting Tool has been through your building &mdash; read on to see what it found.</p>
+
+<h2>About this report</h2>
+<p><b>What this is.</b> The AreaSim Counting Tool is a structured, on-foot study of how a building is actually used. Over fourteen days, our team conducts forty-six full sweeps of every room and zone, then turns what we see into a measured picture of occupancy and capacity utilisation, room by room.</p>
+<p><b>Why companies commission it.</b> To plan new office buildings, refit existing space, calibrate meeting-room demand, identify chronically underused rooms, and anchor workspace decisions in evidence rather than anecdote.</p>
+<p><b>Important to know.</b> A single study is one point in time &mdash; rerun every twelve to eighteen months. Sick leave and seasonality skew windows. Numbers are necessary, not sufficient: acoustics, lighting, ventilation, and layout shape behaviour too. Plan against both today's reality and where the organisation expects to be in three years.</p>
+
+<h2>Daily registration schedule</h2>
+<p>46 observations across 14 working days, 8 to 22 May 2026.</p>
+<table>
+  <tr><th>Day</th><th>Week 1 &mdash; 8 to 14 May</th><th>Week 2 &mdash; 15 to 22 May</th></tr>
+  <tr><td>Monday</td><td>09:00, 11:00, 12:00, 13:30, 15:00</td><td>09:00, 09:30, 10:00, 10:30, 12:30, 13:30</td></tr>
+  <tr><td>Tuesday</td><td>08:30, 10:00, 11:00, 12:00, 13:00, 14:50, 15:30</td><td>&mdash;</td></tr>
+  <tr><td>Wednesday</td><td>08:30, 09:00, 10:00, 11:00, 12:30, 13:30, 14:30</td><td>&mdash;</td></tr>
+  <tr><td>Thursday</td><td>09:00, 09:30, 10:00, 10:30, 12:30, 13:30</td><td>09:00, 09:30, 10:00, 11:00, 12:30, 13:30</td></tr>
+  <tr><td>Friday</td><td>&mdash;</td><td>08:30, 09:30, 10:30, 11:30, 12:30, 13:30, 14:30, 15:30</td></tr>
+</table>
+
+<h2>Glossary of key terms</h2>
+<table>
+  <tr><th>Term</th><th>Definition</th></tr>
+  <tr><td>Room type</td><td>The category used to classify a room or zone (e.g. open landscape, meeting room, quest zone).</td></tr>
+  <tr><td>Room name</td><td>The name of the specific room or zone observed in the building.</td></tr>
+  <tr><td>Capacity</td><td>The number of seats available in a given room or zone when fully set up for use.</td></tr>
+  <tr><td>Capacity utilisation</td><td>How efficiently a room is used relative to its seating capacity when occupied.</td></tr>
+  <tr><td>Average room usage</td><td>How often, on average, a room or zone is in active use across the observation window.</td></tr>
+  <tr><td>Average seat usage</td><td>How often, on average, individual seats within rooms are occupied.</td></tr>
+</table>
 
 <h2>The Building, at a Glance</h2>
 <table>
@@ -2877,8 +3215,18 @@ xmlns='http://www.w3.org/TR/REC-html40'>
 </table>
 <div class="why"><b>Why this matters.</b> Floor 3 is the busiest at 62%, Floor 6 is nearly unused at 18%. Consolidating to three or four floors could eliminate operating costs on entire floors.</div>
 
+<h2>Summary findings, the building's excess capacity</h2>
+<table>
+  <tr><th>Finding</th><th>Figure</th><th>What it means</th></tr>
+  <tr><td>Peak seats per present employee</td><td>4.8&times;</td><td>Even at peak attendance, every employee has 4.8 seats available.</td></tr>
+  <tr><td>Average seats per present employee</td><td>6.5&times;</td><td>On a typical day, that rises to 6.5 seats per person present.</td></tr>
+  <tr><td>Overall vacancy</td><td>79%</td><td>79% of all seats in the building are empty at any given moment.</td></tr>
+  <tr><td>Open-plan underutilisation</td><td>59%</td><td>59% of open-plan workstations were vacant on average.</td></tr>
+  <tr><td>Unused private offices</td><td>37%</td><td>37% of dedicated offices saw zero recorded use across the period.</td></tr>
+</table>
+
 <h2>Space Efficiency Score, C+ (21/100)</h2>
-<p>Components: seat utilization (17%), attendance efficiency (56%), space-to-person ratio (3.7×).</p>
+<p>Components: seat utilization (17%), attendance efficiency (56%), space-to-person ratio (3.7&times;).</p>
 
 <h2>Three Recommendations</h2>
 <h3>01. Right-size your seating</h3>
@@ -2924,6 +3272,56 @@ function exportPPT() {
     s1.addShape(pptx.shapes.RECTANGLE, { x: 0.5, y: 5.5, w: 11, h: 0.02, fill: { color: G_DARK }, line: { color: G_DARK } });
     s1.addText('14 days  ·  46 snapshots  ·  6 floors  ·  370 employees', { x: 0.5, y: 5.65, w: 11, h: 0.4, color: INK3, fontSize: 12, charSpacing: 1 });
 
+    // S1.5 About this report
+    const SAND = 'F5ECDA', SAND_BORDER = 'E5DECE';
+    const sAbout = pptx.addSlide(); sAbout.background = { color: SAND };
+    sAbout.addText('01  ·  ABOUT THIS REPORT', { x: 0.5, y: 0.4, w: 11, h: 0.3, color: A_MID, fontSize: 10, charSpacing: 2 });
+    sAbout.addText('About this report.', { x: 0.5, y: 0.85, w: 11, h: 0.9, color: INK, fontSize: 40, bold: false });
+    sAbout.addText('A short orientation: what this is, why companies commission it, and the assumptions worth keeping in mind.', { x: 0.5, y: 1.7, w: 11, h: 0.6, color: INK2, fontSize: 13, italic: true });
+
+    sAbout.addText('Why companies commission it', { x: 0.5, y: 2.55, w: 5.5, h: 0.35, color: INK, fontSize: 14, bold: true });
+    sAbout.addText([
+      { text: 'Planning new office buildings\n', options: { bullet: { code: '25CF' }, color: A_MID } },
+      { text: 'Refitting and improving existing space\n', options: { bullet: { code: '25CF' }, color: A_MID } },
+      { text: 'Calibrating meeting-room demand and sizing\n', options: { bullet: { code: '25CF' }, color: A_MID } },
+      { text: 'Identifying chronically under-used spaces\n', options: { bullet: { code: '25CF' }, color: A_MID } },
+      { text: 'Anchoring decisions to evidence, not anecdote', options: { bullet: { code: '25CF' }, color: A_MID } }
+    ], { x: 0.5, y: 2.95, w: 5.5, h: 2.6, color: INK, fontSize: 12, paraSpaceAfter: 4 });
+
+    sAbout.addText('Important to know', { x: 6.3, y: 2.55, w: 5.4, h: 0.35, color: INK, fontSize: 14, bold: true });
+    sAbout.addText([
+      { text: 'A single study is one point in time, rerun every 12 to 18 months\n', options: { bullet: { code: '25CF' }, color: G_DARK } },
+      { text: 'Seasonality and absence can quietly tilt a window\n', options: { bullet: { code: '25CF' }, color: G_DARK } },
+      { text: 'Numbers are necessary, not sufficient. Layout, light and acoustics matter too\n', options: { bullet: { code: '25CF' }, color: G_DARK } },
+      { text: 'Plan against today and where the organisation will be in three years\n', options: { bullet: { code: '25CF' }, color: G_DARK } },
+      { text: 'Low usage is a question, not a verdict', options: { bullet: { code: '25CF' }, color: G_DARK } }
+    ], { x: 6.3, y: 2.95, w: 5.4, h: 2.6, color: INK, fontSize: 12, paraSpaceAfter: 4 });
+
+    sAbout.addShape(pptx.shapes.ROUNDED_RECTANGLE, { x: 0.5, y: 5.75, w: 11.25, h: 1.05, fill: { color: WHITE }, line: { color: SAND_BORDER, pt: 1 }, rectRadius: 0.1 });
+    sAbout.addText('Glossary  ·  Capacity utilisation: how efficiently a room is used vs. capacity, when occupied  ·  Average seat usage: how often seats are occupied  ·  Average room usage: how often a room is in use', { x: 0.75, y: 5.9, w: 10.75, h: 0.85, color: INK2, fontSize: 10, lineSpacingMultiple: 1.3 });
+
+    // S1.7 Daily registration schedule
+    const sSched = pptx.addSlide(); sSched.background = { color: WHITE };
+    sSched.addText('02  ·  HOW WE OBSERVED', { x: 0.5, y: 0.4, w: 11, h: 0.3, color: G_DARK, fontSize: 10, charSpacing: 2 });
+    sSched.addText('Daily registration schedule.', { x: 0.5, y: 0.85, w: 11, h: 0.9, color: INK, fontSize: 40, bold: false });
+    sSched.addText('46 observations across 14 working days, 8 to 22 May 2026.', { x: 0.5, y: 1.75, w: 11, h: 0.5, color: INK2, fontSize: 13, italic: true });
+    const schedRows = [
+      [{ text: 'Day', options: { bold: true, color: WHITE } }, { text: 'Week 1, 8 to 14 May', options: { bold: true, color: WHITE } }, { text: 'Week 2, 15 to 22 May', options: { bold: true, color: WHITE } }],
+      ['Monday', '09:00, 11:00, 12:00, 13:30, 15:00', '09:00, 09:30, 10:00, 10:30, 12:30, 13:30'],
+      ['Tuesday', '08:30, 10:00, 11:00, 12:00, 13:00, 14:50, 15:30', '—'],
+      ['Wednesday', '08:30, 09:00, 10:00, 11:00, 12:30, 13:30, 14:30', '—'],
+      ['Thursday', '09:00, 09:30, 10:00, 10:30, 12:30, 13:30', '09:00, 09:30, 10:00, 11:00, 12:30, 13:30'],
+      ['Friday', '—', '08:30, 09:30, 10:30, 11:30, 12:30, 13:30, 14:30, 15:30']
+    ];
+    sSched.addTable(schedRows, {
+      x: 0.5, y: 2.5, w: 11.25, h: 4.0,
+      colW: [1.6, 4.8, 4.85],
+      fontSize: 11, fontFace: 'Inter', color: INK,
+      border: { type: 'solid', color: SAND_BORDER, pt: 0.5 },
+      fill: { color: WHITE }, rowH: 0.55, valign: 'middle'
+    });
+    sSched.addShape(pptx.shapes.RECTANGLE, { x: 0.5, y: 2.5, w: 11.25, h: 0.55, fill: { color: G_DARK }, line: { color: G_DARK } });
+
     // S2 Building
     const s2 = pptx.addSlide(); s2.background = { color: CREAM };
     s2.addText('02  ·  THE BUILDING, AT A GLANCE', { x: 0.5, y: 0.4, w: 11, h: 0.3, color: G_DARK, fontSize: 10, charSpacing: 2 });
@@ -2966,6 +3364,32 @@ function exportPPT() {
     });
     s4.addShape(pptx.shapes.ROUNDED_RECTANGLE, { x: 0.5, y: 5.7, w: 11.25, h: 0.85, fill: { color: A_PALE }, line: { color: A_MID, pt: 1 }, rectRadius: 0.1 });
     s4.addText('At 79% vacancy, roughly four out of every five euros of office spend pays for chairs no one is sitting in.', { x: 0.75, y: 5.8, w: 10.7, h: 0.7, color: INK, fontSize: 12 });
+
+    // S4.5 Summary findings
+    const CORAL = 'FBEBE4', CORAL_BORDER = 'F2D6CC', CORAL_DARK = 'D77F62', PLUM_DARK = '8E84C2';
+    const sFind = pptx.addSlide(); sFind.background = { color: CORAL };
+    sFind.addText('05  ·  SUMMARY FINDINGS', { x: 0.5, y: 0.4, w: 11, h: 0.3, color: CORAL_DARK, fontSize: 10, charSpacing: 2 });
+    sFind.addText('Where the building has room to give back.', { x: 0.5, y: 0.85, w: 11, h: 0.9, color: INK, fontSize: 36, bold: false });
+    sFind.addText('The five headline findings from your fourteen-day window.', { x: 0.5, y: 1.7, w: 11, h: 0.55, color: INK2, fontSize: 13, italic: true });
+
+    const findings = [
+      ['4.8×', 'Peak seats per present employee', 'Even at peak attendance, 4.8 seats are available for every person on site.', G_DARK],
+      ['6.5×', 'Average seats per present employee', 'On a typical day this rises to 6.5 seats per person present.', PLUM_DARK],
+      ['79%',  'Overall vacancy', '79% of all seats in the building are empty at any given moment.', A_MID],
+      ['59%',  'Open-plan underutilisation', '59% of open-plan workstations were vacant on average across the window.', CORAL_DARK],
+      ['37%',  'Unused private offices', '37% of dedicated offices saw zero recorded use across the period.', G_DARK]
+    ];
+    findings.forEach(([v, lbl, body, c], i) => {
+      const cols = 2;
+      const x = 0.5 + (i % cols) * 5.7;
+      const y = 2.5 + Math.floor(i / cols) * 1.45;
+      sFind.addShape(pptx.shapes.ROUNDED_RECTANGLE, { x, y, w: 5.55, h: 1.3, fill: { color: WHITE }, line: { color: CORAL_BORDER, pt: 1 }, rectRadius: 0.1 });
+      sFind.addText(v,   { x: x + 0.2, y: y + 0.15, w: 1.6,  h: 1.0, color: c,    fontSize: 36, bold: false, valign: 'top' });
+      sFind.addText(lbl, { x: x + 1.9, y: y + 0.15, w: 3.55, h: 0.4, color: INK,  fontSize: 13, bold: true });
+      sFind.addText(body,{ x: x + 1.9, y: y + 0.55, w: 3.55, h: 0.7, color: INK2, fontSize: 10 });
+    });
+    sFind.addShape(pptx.shapes.ROUNDED_RECTANGLE, { x: 6.2, y: 5.4, w: 5.55, h: 1.3, fill: { color: WHITE }, line: { color: CORAL_BORDER, pt: 1 }, rectRadius: 0.1 });
+    sFind.addText('A defensible baseline. Re-count in six to twelve months to measure the impact of any changes you make.', { x: 6.4, y: 5.55, w: 5.2, h: 1.0, color: INK2, fontSize: 11, italic: true });
 
     // S5 Score
     const s5 = pptx.addSlide(); s5.background = { color: CREAM };
