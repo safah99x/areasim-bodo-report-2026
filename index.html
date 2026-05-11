@@ -1,0 +1,1808 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AreaSim — Bodø Municipality · Office Report 2026</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      /* ── Brand ── */
+      --amber:      #D16B1C;
+      --amber-lt:   #EE8D3A;
+      --amber-pale: #FFF1E3;
+      --gold:       #EBB828;
+      --gold-lt:    #F5D462;
+      /* ── Darks ── */
+      --dk0:        #0A0805;
+      --dk1:        #100E08;
+      --dk2:        #18150E;
+      --dk3:        #221C10;
+      --dk-amber:   #2A1A06;
+      --dk-slate:   #0E0C18;
+      /* ── Lights ── */
+      --cream:      #FAF8F3;
+      --white:      #FFFFFF;
+      /* ── Text ── */
+      --txt-d:      #1A1510;
+      --txt-m:      #5A4A35;
+      --txt-l:      #9A8A70;
+      /* ── Accents ── */
+      --purple:     #7C5CE6;
+      --sky:        #38BDF8;
+      --rose:       #FB7185;
+      --green:      #34D399;
+      --red:        #EF4444;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Space Grotesk', sans-serif;
+      background: var(--cream);
+      color: var(--txt-d);
+      overflow-x: hidden;
+    }
+
+    /* ─────────────────────────────────────
+       GRAIN TEXTURE (premium dark sections)
+    ───────────────────────────────────── */
+    .grain::after {
+      content: '';
+      position: absolute; inset: 0; pointer-events: none; z-index: 1;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n' x='0' y='0'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+      background-repeat: repeat;
+      mix-blend-mode: overlay;
+    }
+
+    /* ─────────────────────────────────────
+       PROGRESS BAR
+    ───────────────────────────────────── */
+    #topbar {
+      position: fixed; top: 0; left: 0; height: 3px;
+      background: linear-gradient(90deg, var(--amber), var(--gold));
+      width: 0%; z-index: 2000;
+      transition: width 0.15s linear;
+      box-shadow: 0 0 12px rgba(235,184,40,0.5);
+    }
+
+    /* ─────────────────────────────────────
+       EXPORT PILL
+    ───────────────────────────────────── */
+    .export-pill {
+      position: fixed; top: 20px; right: 24px; z-index: 1500;
+      display: flex; align-items: center; gap: 4px;
+      background: rgba(10,8,5,0.82);
+      backdrop-filter: blur(20px) saturate(1.8);
+      border: 1px solid rgba(209,107,28,0.28);
+      border-radius: 100px;
+      padding: 5px 6px;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.04);
+    }
+    .pill-sep {
+      width: 1px; height: 20px;
+      background: rgba(255,255,255,0.1); margin: 0 2px;
+    }
+    .xbtn {
+      display: flex; align-items: center; gap: 5px;
+      padding: 7px 16px; border-radius: 100px;
+      border: none; cursor: pointer;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 11px; font-weight: 700;
+      letter-spacing: 0.8px; text-transform: uppercase;
+      transition: all 0.18s ease;
+    }
+    .xbtn:hover { transform: translateY(-2px); }
+    .xbtn:active { transform: scale(0.97); }
+    .xbtn svg { width: 13px; height: 13px; }
+    .xb-pdf { background: #EF4444; color: #fff; }
+    .xb-doc { background: #2F80ED; color: #fff; }
+    .xb-ppt { background: var(--gold); color: var(--dk0); }
+
+    /* ─────────────────────────────────────
+       NAV DOTS
+    ───────────────────────────────────── */
+    #navdots {
+      position: fixed; right: 22px; top: 50%;
+      transform: translateY(-50%);
+      z-index: 1200;
+      display: flex; flex-direction: column; gap: 8px;
+    }
+    .ndot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: rgba(255,255,255,0.2);
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.34,1.56,0.64,1);
+      border: 1px solid rgba(255,255,255,0.3);
+    }
+    .ndot.active {
+      background: var(--amber);
+      height: 20px; border-radius: 3px;
+      border-color: var(--amber);
+      box-shadow: 0 0 12px rgba(209,107,28,0.6);
+    }
+    .ndot:hover:not(.active) {
+      background: rgba(255,255,255,0.55);
+      transform: scale(1.3);
+    }
+
+    /* ─────────────────────────────────────
+       SECTION BASE
+    ───────────────────────────────────── */
+    .section {
+      min-height: 100vh;
+      display: flex; flex-direction: column; justify-content: center;
+      padding: 96px clamp(32px, 8vw, 96px);
+      position: relative; overflow: hidden;
+    }
+    .si { position: relative; z-index: 2; }
+
+    /* ─────────────────────────────────────
+       SECTION THEMES
+    ───────────────────────────────────── */
+    .s-cover    { background: var(--dk1); color: #fff; }
+    .s-story    { background: var(--cream); color: var(--txt-d); }
+    .s-building { background: var(--white); color: var(--txt-d); }
+    .s-attend   { background: var(--dk-amber); color: #fff; }
+    .s-seats    { background: var(--dk-slate); color: #fff; }
+    .s-snap     { background: var(--dk2); color: #fff; }
+    .s-rooms    { background: var(--dk3); color: #fff; }
+    .s-floors   { background: var(--dk1); color: #fff; }
+    .s-score    { background: #160C02; color: #fff; }
+    .s-insights { background: var(--cream); color: var(--txt-d); }
+    .s-recs     { background: var(--dk2); color: #fff; }
+    .s-outro    { background: var(--dk0); color: #fff; }
+
+    /* ─────────────────────────────────────
+       AMBIENT LIGHT BLOBS
+    ───────────────────────────────────── */
+    .blob {
+      position: absolute; border-radius: 50%;
+      pointer-events: none; z-index: 0;
+      filter: blur(80px);
+    }
+
+    /* ─────────────────────────────────────
+       TYPOGRAPHY
+    ───────────────────────────────────── */
+    .ch-label {
+      display: flex; align-items: center; gap: 10px;
+      margin-bottom: 20px;
+    }
+    .ch-line {
+      width: 24px; height: 2px;
+      background: var(--amber);
+    }
+    .ch-text {
+      font-family: 'Space Mono', monospace;
+      font-size: 11px; letter-spacing: 2.5px;
+      text-transform: uppercase; opacity: 0.45;
+    }
+
+    .hl-xl {
+      font-size: clamp(56px, 9.5vw, 136px);
+      font-weight: 700; line-height: 0.9;
+      letter-spacing: -3px;
+    }
+    .hl-lg {
+      font-size: clamp(40px, 6.5vw, 84px);
+      font-weight: 700; line-height: 0.92;
+      letter-spacing: -2px;
+    }
+    .hl-md {
+      font-size: clamp(28px, 3.5vw, 52px);
+      font-weight: 700; line-height: 1.05;
+      letter-spacing: -1px;
+    }
+    .body-copy {
+      font-size: 17px; line-height: 1.72;
+      max-width: 560px; opacity: 0.78;
+    }
+    .bignum {
+      font-size: clamp(96px, 17vw, 210px);
+      font-weight: 700; line-height: 0.88;
+      letter-spacing: -6px;
+    }
+    .bigunit {
+      font-size: clamp(36px, 5vw, 72px);
+      font-weight: 300; opacity: 0.45;
+    }
+
+    /* ─────────────────────────────────────
+       WHY BOX
+    ───────────────────────────────────── */
+    .why {
+      display: flex; gap: 14px;
+      background: rgba(209,107,28,0.12);
+      border: 1px solid rgba(209,107,28,0.25);
+      border-radius: 16px; padding: 18px 22px;
+      margin-top: 32px; max-width: 580px;
+      font-size: 14px; line-height: 1.7;
+    }
+    .why.on-light {
+      background: rgba(209,107,28,0.07);
+      border-color: rgba(209,107,28,0.2);
+      color: var(--txt-d);
+    }
+    .why-icon { font-size: 20px; flex-shrink: 0; line-height: 1.7; }
+
+    /* ─────────────────────────────────────
+       LAYOUT HELPERS
+    ───────────────────────────────────── */
+    .split {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: clamp(48px, 7vw, 112px);
+      align-items: center;
+    }
+
+    /* ─────────────────────────────────────
+       STAT CARDS (Building section)
+    ───────────────────────────────────── */
+    .stat-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px; margin-top: 48px;
+    }
+    .stat-card {
+      background: var(--white);
+      border: 1px solid rgba(0,0,0,0.07);
+      border-radius: 24px; padding: 36px 28px;
+      position: relative; overflow: hidden;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      box-shadow: 0 2px 20px rgba(0,0,0,0.05);
+    }
+    .stat-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 16px 48px rgba(0,0,0,0.1);
+    }
+    .stat-card::before {
+      content: ''; position: absolute;
+      top: 0; left: 0; right: 0; height: 4px;
+      border-radius: 24px 24px 0 0;
+    }
+    .sc-a::before  { background: var(--amber); }
+    .sc-g::before  { background: var(--gold); }
+    .sc-p::before  { background: var(--purple); }
+    .sc-gr::before { background: var(--green); }
+    .sc-val {
+      font-size: clamp(40px, 4.5vw, 60px);
+      font-weight: 700; line-height: 1;
+      color: var(--txt-d); margin-bottom: 10px;
+    }
+    .sc-name { font-size: 15px; font-weight: 600; color: var(--txt-m); }
+    .sc-sub  { font-size: 12px; color: var(--txt-l); margin-top: 5px; }
+
+    /* ─────────────────────────────────────
+       CHART BOX
+    ───────────────────────────────────── */
+    .cbox {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.09);
+      border-radius: 24px; padding: 28px 28px 24px;
+    }
+    .cbox.on-light {
+      background: var(--white);
+      border: 1px solid rgba(0,0,0,0.07);
+      box-shadow: 0 2px 24px rgba(0,0,0,0.06);
+    }
+    .cbox-label {
+      font-family: 'Space Mono', monospace;
+      font-size: 10px; letter-spacing: 2px;
+      text-transform: uppercase; opacity: 0.4;
+      margin-bottom: 20px; display: block;
+    }
+
+    /* ─────────────────────────────────────
+       PROGRESS ROWS
+    ───────────────────────────────────── */
+    .prow { margin-bottom: 22px; }
+    .prow:last-child { margin-bottom: 0; }
+    .pmeta {
+      display: flex; justify-content: space-between;
+      align-items: baseline; margin-bottom: 8px;
+      font-size: 14px; font-weight: 500;
+    }
+    .ptrack {
+      height: 10px; background: rgba(255,255,255,0.1);
+      border-radius: 5px; overflow: hidden;
+    }
+    .pfill {
+      height: 100%; border-radius: 5px;
+      width: 0%;
+      transition: width 1.6s cubic-bezier(0.4,0,0.2,1);
+    }
+
+    /* ─────────────────────────────────────
+       SNAPSHOT BARS
+    ───────────────────────────────────── */
+    .srow { margin-bottom: 16px; }
+    .srow:last-child { margin-bottom: 0; }
+    .smeta {
+      display: flex; justify-content: space-between;
+      font-size: 13px; margin-bottom: 6px; opacity: 0.85;
+    }
+    .strack {
+      height: 36px; background: rgba(255,255,255,0.08);
+      border-radius: 10px; overflow: hidden;
+    }
+    .sfill {
+      height: 100%; border-radius: 10px;
+      width: 0%;
+      transition: width 1.8s cubic-bezier(0.4,0,0.2,1);
+      display: flex; align-items: center; padding-left: 14px;
+      font-size: 12px; font-weight: 700;
+      color: rgba(0,0,0,0.45);
+    }
+
+    /* ─────────────────────────────────────
+       ROOM LIST
+    ───────────────────────────────────── */
+    .rrow {
+      display: flex; align-items: center; gap: 14px;
+      margin-bottom: 16px;
+    }
+    .rswatch { width: 10px; height: 10px; border-radius: 3px; flex-shrink: 0; }
+    .rdetail { flex: 1; }
+    .rmeta {
+      display: flex; justify-content: space-between;
+      font-size: 14px; font-weight: 500;
+      margin-bottom: 6px;
+    }
+    .rtrack {
+      height: 5px; background: rgba(255,255,255,0.1);
+      border-radius: 3px; overflow: hidden;
+    }
+    .rfill {
+      height: 100%; border-radius: 3px;
+      width: 0%;
+      transition: width 1.8s cubic-bezier(0.4,0,0.2,1);
+    }
+
+    /* ─────────────────────────────────────
+       FLOOR GRID
+    ───────────────────────────────────── */
+    .flr-grid {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 14px; margin-top: 48px;
+    }
+    .flr-card {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 20px; padding: 20px 14px;
+      text-align: center; transition: background 0.3s;
+    }
+    .flr-card:hover { background: rgba(255,255,255,0.09); }
+    .flr-tag {
+      font-family: 'Space Mono', monospace;
+      font-size: 9px; text-transform: uppercase;
+      letter-spacing: 1.5px; opacity: 0.35; margin-bottom: 6px;
+    }
+    .flr-num { font-size: 30px; font-weight: 700; margin-bottom: 12px; }
+    .flr-bar-wrap {
+      height: 64px; background: rgba(255,255,255,0.07);
+      border-radius: 8px; overflow: hidden;
+      display: flex; align-items: flex-end;
+      margin-bottom: 10px;
+    }
+    .flr-bar {
+      width: 100%; height: 0%;
+      border-radius: 8px;
+      transition: height 1.8s cubic-bezier(0.4,0,0.2,1);
+    }
+    .flr-pct { font-size: 18px; font-weight: 700; }
+    .flr-sub { font-size: 10px; opacity: 0.38; margin-top: 2px; }
+    .flr-info {
+      font-size: 10px; opacity: 0.38; margin-top: 8px;
+      padding-top: 8px;
+      border-top: 1px solid rgba(255,255,255,0.07);
+      line-height: 1.6;
+    }
+
+    /* ─────────────────────────────────────
+       SCORE SECTION
+    ───────────────────────────────────── */
+    .score-wrap {
+      display: flex; align-items: flex-start;
+      gap: 64px; margin-top: 48px; flex-wrap: wrap;
+    }
+    .score-ring {
+      width: 216px; height: 216px; border-radius: 50%;
+      border: 2px solid rgba(235,184,40,0.25);
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      flex-shrink: 0;
+      background: radial-gradient(circle, rgba(235,184,40,0.1) 0%, transparent 65%);
+      position: relative;
+    }
+    .score-ring::before {
+      content: '';
+      position: absolute; inset: -8px;
+      border-radius: 50%;
+      border: 1px solid rgba(235,184,40,0.1);
+    }
+    .score-grade {
+      font-size: 92px; font-weight: 700; line-height: 1;
+      background: linear-gradient(145deg, var(--gold-lt), var(--amber));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .score-sub { font-size: 12px; opacity: 0.4; margin-top: 4px; letter-spacing: 1px; text-transform: uppercase; font-family: 'Space Mono', monospace; }
+    .score-num { font-size: 56px; font-weight: 700; text-align: center; margin-top: 16px; }
+    .score-cap { font-size: 12px; opacity: 0.4; text-align: center; }
+    .badge-grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    .badge {
+      display: flex; align-items: center; gap: 14px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 16px; padding: 14px 18px;
+      transition: background 0.2s;
+    }
+    .badge:hover:not(.locked) { background: rgba(255,255,255,0.09); }
+    .badge.locked { opacity: 0.32; filter: grayscale(0.8); }
+    .bdg-icon { font-size: 26px; flex-shrink: 0; }
+    .bdg-title { font-size: 13px; font-weight: 700; }
+    .bdg-desc { font-size: 11px; opacity: 0.5; margin-top: 2px; }
+
+    /* ─────────────────────────────────────
+       INSIGHT CARDS
+    ───────────────────────────────────── */
+    .ins-grid {
+      display: grid; grid-template-columns: repeat(2, 1fr);
+      gap: 24px; margin-top: 48px;
+    }
+    .ins-card {
+      background: var(--white);
+      border-radius: 24px; padding: 36px 32px;
+      border-left: 5px solid;
+      box-shadow: 0 2px 24px rgba(0,0,0,0.06);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .ins-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 20px 56px rgba(0,0,0,0.1);
+    }
+    .ic-a { border-color: var(--amber); }
+    .ic-g { border-color: var(--gold); }
+    .ic-p { border-color: var(--purple); }
+    .ic-r { border-color: var(--red); }
+    .ic-emoji { font-size: 32px; margin-bottom: 18px; }
+    .ic-title  { font-size: 20px; font-weight: 700; margin-bottom: 6px; }
+    .ic-stat   { font-size: 44px; font-weight: 700; margin-bottom: 10px; line-height: 1; }
+    .ic-desc   { font-size: 14px; color: var(--txt-m); line-height: 1.68; }
+
+    /* ─────────────────────────────────────
+       RECOMMENDATION CARDS
+    ───────────────────────────────────── */
+    .rec-list { display: flex; flex-direction: column; gap: 16px; margin-top: 48px; }
+    .rec-card {
+      display: flex; align-items: flex-start; gap: 28px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.09);
+      border-radius: 24px; padding: 28px 32px;
+      transition: background 0.2s, border-color 0.2s;
+    }
+    .rec-card:hover {
+      background: rgba(255,255,255,0.08);
+      border-color: rgba(209,107,28,0.3);
+    }
+    .rec-n {
+      font-size: 56px; font-weight: 700;
+      color: var(--amber); line-height: 1; min-width: 52px;
+      opacity: 0.8;
+    }
+    .rec-title { font-size: 22px; font-weight: 700; margin-bottom: 8px; }
+    .rec-body  { font-size: 15px; opacity: 0.72; line-height: 1.68; }
+
+    /* ─────────────────────────────────────
+       COVER SECTION
+    ───────────────────────────────────── */
+    .cv-logo {
+      display: flex; align-items: center;
+      gap: 10px; margin-bottom: 52px;
+    }
+    .cv-logo-name {
+      font-size: 18px; font-weight: 600; color: #fff;
+      letter-spacing: -0.3px;
+    }
+    .cv-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      border: 1px solid rgba(209,107,28,0.4);
+      background: rgba(209,107,28,0.14);
+      color: var(--amber-lt); border-radius: 100px;
+      padding: 8px 20px; font-size: 12px; font-weight: 600;
+      letter-spacing: 0.5px; margin-bottom: 24px;
+    }
+    .cv-meta {
+      display: flex; gap: 40px; margin-top: 56px;
+      padding-top: 40px;
+      border-top: 1px solid rgba(255,255,255,0.1);
+      flex-wrap: wrap;
+    }
+    .cv-meta-item span {
+      display: block;
+      font-family: 'Space Mono', monospace;
+      font-size: 10px; letter-spacing: 1.5px;
+      text-transform: uppercase; opacity: 0.35;
+      margin-bottom: 5px;
+    }
+    .cv-meta-item { font-size: 15px; font-weight: 600; }
+    .scroll-hint {
+      position: absolute; bottom: 40px; left: 50%;
+      transform: translateX(-50%);
+      display: flex; flex-direction: column;
+      align-items: center; gap: 8px;
+      font-family: 'Space Mono', monospace;
+      font-size: 10px; letter-spacing: 2px;
+      text-transform: uppercase; opacity: 0.3;
+      animation: bob 2.8s ease-in-out infinite;
+    }
+    @keyframes bob {
+      0%, 100% { transform: translateX(-50%) translateY(0); }
+      50%       { transform: translateX(-50%) translateY(-9px); }
+    }
+
+    /* ─────────────────────────────────────
+       STORY SECTION — TIMELINE
+    ───────────────────────────────────── */
+    .timeline {
+      display: flex; align-items: stretch;
+      margin-top: 48px; gap: 0;
+    }
+    .tl-block {
+      flex: 1; padding: 22px 28px;
+      border-radius: 16px; color: #fff;
+    }
+    .tl-join {
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      padding: 0 16px; gap: 6px;
+      color: var(--txt-l); font-size: 10px;
+      text-align: center;
+    }
+    .tl-dots { display: flex; gap: 4px; }
+    .tl-dot { width: 4px; height: 4px; border-radius: 50%; background: var(--txt-l); }
+
+    /* ─────────────────────────────────────
+       ATTENDANCE — PAIR STATS
+    ───────────────────────────────────── */
+    .at-pair {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 12px; margin-top: 14px;
+    }
+    .at-mini {
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 16px; padding: 20px; text-align: center;
+    }
+    .at-val { font-size: 32px; font-weight: 700; }
+    .at-lbl { font-size: 12px; opacity: 0.6; margin-top: 3px; }
+
+    /* ─────────────────────────────────────
+       OUTRO CTA
+    ───────────────────────────────────── */
+    .cta-row {
+      display: flex; gap: 14px;
+      justify-content: center; flex-wrap: wrap;
+      margin-top: 48px;
+    }
+    .cta-a {
+      background: var(--amber); color: var(--white);
+      padding: 16px 36px; border-radius: 100px;
+      font-weight: 700; font-size: 16px; cursor: pointer;
+      transition: all 0.22s ease;
+      box-shadow: 0 4px 24px rgba(209,107,28,0.4);
+    }
+    .cta-a:hover {
+      background: var(--amber-lt);
+      transform: translateY(-3px);
+      box-shadow: 0 12px 40px rgba(209,107,28,0.5);
+    }
+    .cta-b {
+      background: rgba(255,255,255,0.08); color: #fff;
+      padding: 16px 36px; border-radius: 100px;
+      font-weight: 600; font-size: 16px; cursor: pointer;
+      border: 1px solid rgba(255,255,255,0.16);
+      transition: background 0.2s;
+    }
+    .cta-b:hover { background: rgba(255,255,255,0.14); }
+
+    /* ─────────────────────────────────────
+       INLINE HIGHLIGHT PILL
+    ───────────────────────────────────── */
+    .hl {
+      display: inline-block;
+      background: rgba(209,107,28,0.18);
+      color: var(--amber-lt);
+      border-radius: 6px; padding: 1px 8px;
+      font-weight: 700;
+    }
+    .hl.on-dark-bg {
+      background: rgba(235,184,40,0.18);
+      color: var(--gold-lt);
+    }
+
+    /* ─────────────────────────────────────
+       ANIMATE IN
+    ───────────────────────────────────── */
+    .ai {
+      opacity: 0; transform: translateY(26px);
+      transition: opacity 0.72s ease, transform 0.72s ease;
+    }
+    .ai.in { opacity: 1; transform: translateY(0); }
+    .d1 { transition-delay: 0.08s; }
+    .d2 { transition-delay: 0.18s; }
+    .d3 { transition-delay: 0.28s; }
+    .d4 { transition-delay: 0.40s; }
+    .d5 { transition-delay: 0.52s; }
+
+    /* ─────────────────────────────────────
+       LOADER
+    ───────────────────────────────────── */
+    #loader {
+      position: fixed; inset: 0;
+      background: var(--dk0);
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      z-index: 9999;
+      transition: opacity 0.7s ease;
+    }
+    #loader.out { opacity: 0; pointer-events: none; }
+    .ld-logo {
+      display: flex; align-items: center; gap: 10px;
+      margin-bottom: 44px;
+    }
+    .ld-bar-bg {
+      width: 220px; height: 2px;
+      background: rgba(255,255,255,0.08); border-radius: 2px;
+    }
+    .ld-bar-fill {
+      height: 100%; width: 0%; border-radius: 2px;
+      background: linear-gradient(90deg, var(--amber), var(--gold));
+      transition: width 1.3s cubic-bezier(0.4,0,0.2,1);
+      box-shadow: 0 0 10px rgba(235,184,40,0.5);
+    }
+    .ld-text {
+      font-family: 'Space Mono', monospace;
+      font-size: 10px; letter-spacing: 2.5px;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.28);
+      margin-top: 18px;
+    }
+    .ld-name {
+      font-size: 18px; font-weight: 600; color: #fff; letter-spacing: -0.3px;
+    }
+
+    /* ─────────────────────────────────────
+       PRINT
+    ───────────────────────────────────── */
+    @media print {
+      .export-pill, #navdots, #topbar, .scroll-hint { display: none !important; }
+      .section { page-break-after: always; min-height: 100vh; }
+      body { background: white; }
+    }
+
+    /* ─────────────────────────────────────
+       RESPONSIVE
+    ───────────────────────────────────── */
+    @media (max-width: 960px) {
+      .split { grid-template-columns: 1fr; gap: 40px; }
+      .stat-grid { grid-template-columns: repeat(2, 1fr); }
+      .ins-grid { grid-template-columns: 1fr; }
+      .flr-grid { grid-template-columns: repeat(3, 1fr); }
+      .badge-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 600px) {
+      .section { padding: 80px 24px; }
+      .stat-grid { grid-template-columns: 1fr 1fr; }
+      .flr-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ─── LOADER ─── -->
+<div id="loader">
+  <div class="ld-logo">
+    <svg width="32" height="36" viewBox="0 0 32 36" fill="none">
+      <defs>
+        <linearGradient id="lg0" x1="16" y1="0" x2="16" y2="36" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stop-color="#F5D462"/>
+          <stop offset="100%" stop-color="#D16B1C"/>
+        </linearGradient>
+      </defs>
+      <path d="M16 0 L32 32 L0 32 Z" fill="url(#lg0)"/>
+    </svg>
+    <span class="ld-name">AreaSim</span>
+  </div>
+  <div class="ld-bar-bg"><div class="ld-bar-fill" id="ldFill"></div></div>
+  <div class="ld-text">Preparing your report</div>
+</div>
+
+<!-- ─── SCROLL PROGRESS ─── -->
+<div id="topbar"></div>
+
+<!-- ─── EXPORT PILL ─── -->
+<div class="export-pill">
+  <button class="xbtn xb-pdf" onclick="exportPDF()">
+    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+      <path d="M8 2v8M5 7l3 3 3-3M2 12v1a1 1 0 001 1h10a1 1 0 001-1v-1"/>
+    </svg>
+    PDF
+  </button>
+  <div class="pill-sep"></div>
+  <button class="xbtn xb-doc" onclick="exportDOC()">
+    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+      <path d="M8 2v8M5 7l3 3 3-3M2 12v1a1 1 0 001 1h10a1 1 0 001-1v-1"/>
+    </svg>
+    DOC
+  </button>
+  <div class="pill-sep"></div>
+  <button class="xbtn xb-ppt" onclick="exportPPT()">
+    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+      <path d="M8 2v8M5 7l3 3 3-3M2 12v1a1 1 0 001 1h10a1 1 0 001-1v-1"/>
+    </svg>
+    PPT
+  </button>
+</div>
+
+<!-- ─── NAV DOTS ─── -->
+<div id="navdots"></div>
+
+
+<!-- ══════════════════════════════════════════════════
+     01 — COVER
+══════════════════════════════════════════════════ -->
+<section class="section s-cover grain" id="s1" data-label="Cover">
+  <div class="blob" style="width:600px;height:600px;background:rgba(209,107,28,0.08);right:-200px;top:-200px;"></div>
+  <div class="blob" style="width:350px;height:350px;background:rgba(235,184,40,0.05);left:-100px;bottom:-50px;"></div>
+
+  <div class="si">
+    <!-- Logo -->
+    <div class="cv-logo ai">
+      <svg width="30" height="34" viewBox="0 0 30 34" fill="none">
+        <defs>
+          <linearGradient id="lg-cover" x1="15" y1="0" x2="15" y2="34" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stop-color="#F5D462"/>
+            <stop offset="100%" stop-color="#D16B1C"/>
+          </linearGradient>
+        </defs>
+        <path d="M15 0 L30 30 L0 30 Z" fill="url(#lg-cover)"/>
+      </svg>
+      <span class="cv-logo-name">AreaSim</span>
+    </div>
+
+    <div class="cv-badge ai d1">🏢 Office Intelligence Report · 2026</div>
+
+    <h1 class="hl-xl ai d2">Bodø<br>Municipality</h1>
+
+    <p class="ai d3" style="font-size:clamp(18px,2.4vw,30px);font-weight:300;opacity:0.5;margin-top:16px;letter-spacing:-0.5px;">
+      Your office, unwrapped.
+    </p>
+
+    <div class="cv-meta ai d4">
+      <div class="cv-meta-item"><span>Observation period</span>8–22 May 2026</div>
+      <div class="cv-meta-item"><span>Snapshots taken</span>46 moments</div>
+      <div class="cv-meta-item"><span>Days observed</span>14 working days</div>
+      <div class="cv-meta-item"><span>Floors covered</span>6 floors</div>
+    </div>
+  </div>
+
+  <div class="scroll-hint">
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+      <path d="M8 2v12M4 10l4 4 4-4"/>
+    </svg>
+    Scroll to explore
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════
+     02 — THE STORY
+══════════════════════════════════════════════════ -->
+<section class="section s-story" id="s2" data-label="The Story">
+  <div class="blob" style="width:480px;height:480px;background:rgba(209,107,28,0.05);right:-180px;bottom:-180px;filter:blur(100px);"></div>
+
+  <div class="si">
+    <div class="ch-label ai"><div class="ch-line"></div><span class="ch-text">Chapter 01 — Context</span></div>
+    <h2 class="hl-lg ai d1">14 days.<br>46 snapshots.<br>One honest picture.</h2>
+
+    <p class="body-copy ai d2" style="margin-top:24px;">
+      Between <strong>8 and 22 May 2026</strong>, we walked through every corner of your building — 6&nbsp;floors, 198 rooms and zones — capturing usage data across mornings, lunchtimes, and afternoons to build the clearest possible picture of how your space is actually being used.
+    </p>
+
+    <div class="why on-light ai d3">
+      <span class="why-icon">💡</span>
+      <div>
+        <strong>Why this matters to you:</strong> Most offices are designed for maximum headcount — a day that rarely arrives. This report shows the gap between what you're paying for and what you're actually using. That gap is money you could redirect.
+      </div>
+    </div>
+
+    <div class="timeline ai d4">
+      <div class="tl-block" style="background:var(--amber);">
+        <div style="font-family:'Space Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;opacity:0.65;margin-bottom:8px;">Week 1</div>
+        <div style="font-size:17px;font-weight:700;">May 8 – 12</div>
+        <div style="font-size:13px;opacity:0.75;margin-top:5px;">25 snapshots — Mon through Thu</div>
+      </div>
+      <div class="tl-join">
+        <div class="tl-dots"><div class="tl-dot"></div><div class="tl-dot"></div><div class="tl-dot"></div></div>
+        <span style="font-size:18px;">🏖</span>
+        <div class="tl-dots"><div class="tl-dot"></div><div class="tl-dot"></div><div class="tl-dot"></div></div>
+        <span style="font-size:9px;text-transform:uppercase;letter-spacing:1px;">Weekend</span>
+      </div>
+      <div class="tl-block" style="background:var(--dk3);border:1px solid rgba(255,255,255,0.1);">
+        <div style="font-family:'Space Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;opacity:0.5;margin-bottom:8px;">Week 2</div>
+        <div style="font-size:17px;font-weight:700;">May 15 – 22</div>
+        <div style="font-size:13px;opacity:0.65;margin-top:5px;">21 snapshots — Mon, Thu, Fri</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════
+     03 — YOUR BUILDING
+══════════════════════════════════════════════════ -->
+<section class="section s-building" id="s3" data-label="Building">
+  <div class="si">
+    <div class="ch-label ai"><div class="ch-line"></div><span class="ch-text" style="color:var(--txt-l);">Chapter 02 — Your building at a glance</span></div>
+    <h2 class="hl-lg ai d1" style="color:var(--txt-d);">Meet your office.</h2>
+    <p class="body-copy ai d2">Before we get into the insights, here's what we're working with — the raw numbers that frame everything.</p>
+
+    <div class="stat-grid ai d3">
+      <div class="stat-card sc-a">
+        <div class="sc-val" data-countup="370">0</div>
+        <div class="sc-name">Employees</div>
+        <div class="sc-sub">Total headcount</div>
+      </div>
+      <div class="stat-card sc-g">
+        <div class="sc-val" data-countup="1275">0</div>
+        <div class="sc-name">Total seats</div>
+        <div class="sc-sub">Across all 6 floors</div>
+      </div>
+      <div class="stat-card sc-p">
+        <div class="sc-val" data-countup="6">0</div>
+        <div class="sc-name">Floors</div>
+        <div class="sc-sub">All fully measured</div>
+      </div>
+      <div class="stat-card sc-gr">
+        <div class="sc-val">3.7<span style="font-size:22px;font-weight:400;color:var(--txt-l);">×</span></div>
+        <div class="sc-name">Seats per employee</div>
+        <div class="sc-sub">Industry avg: 1.0–1.2×</div>
+      </div>
+    </div>
+
+    <div class="why on-light ai" style="margin-top:36px;">
+      <span class="why-icon">🔑</span>
+      <div>
+        <strong>3.7 seats per person is roughly 3× the global benchmark.</strong> The standard for activity-based working is 1.0–1.2×. You have enough chairs to seat every employee and three guests simultaneously — every single day of the week.
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════
+     04 — ATTENDANCE
+══════════════════════════════════════════════════ -->
+<section class="section s-attend grain" id="s4" data-label="Attendance">
+  <div class="blob" style="width:700px;height:700px;background:rgba(235,184,40,0.06);right:-300px;top:-300px;"></div>
+
+  <div class="si">
+    <div class="split">
+      <div>
+        <div class="ch-label ai"><div class="ch-line"></div><span class="ch-text" style="opacity:0.4;">Chapter 03 — Who showed up</span></div>
+        <h2 class="hl-md ai d1">On your best day,</h2>
+        <div class="bignum ai d2" style="background:linear-gradient(135deg,#F5D462,#D16B1C);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">
+          75<span class="bigunit" style="-webkit-text-fill-color:rgba(255,255,255,0.35);">%</span>
+        </div>
+        <p class="ai d3" style="font-size:20px;font-weight:600;margin-top:14px;opacity:0.9;">
+          of your team came in.<br>
+          <span style="font-weight:400;font-size:16px;opacity:0.55;">That's 227 out of 370 people.</span>
+        </p>
+
+        <div class="why ai d4">
+          <span class="why-icon">📊</span>
+          <div>
+            <strong>On a typical day, only 56% of your team showed up</strong> — around 208 people. Your building is designed as if all 370 employees arrive every morning. The data says that never happens, and that discrepancy costs you money.
+          </div>
+        </div>
+      </div>
+
+      <div class="ai d3">
+        <div class="cbox on-light">
+          <span class="cbox-label" style="color:var(--txt-l);">Daily attendance · 14-day period</span>
+          <canvas id="chartAttend" height="220"></canvas>
+        </div>
+        <div class="at-pair">
+          <div class="at-mini"><div class="at-val">75%</div><div class="at-lbl">Peak attendance</div></div>
+          <div class="at-mini"><div class="at-val">56%</div><div class="at-lbl">Average attendance</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════
+     05 — THE SEAT REALITY
+══════════════════════════════════════════════════ -->
+<section class="section s-seats grain" id="s5" data-label="Seat Reality">
+  <div class="blob" style="width:500px;height:500px;background:rgba(124,92,230,0.2);right:-200px;bottom:-200px;"></div>
+
+  <div class="si">
+    <div class="ch-label ai"><div class="ch-line" style="background:var(--purple);"></div><span class="ch-text">Chapter 04 — The seat reality</span></div>
+
+    <div class="split">
+      <div>
+        <h2 class="hl-md ai d1">Even when people come in — most seats stay empty.</h2>
+        <div class="bignum ai d2" style="margin-top:20px;background:linear-gradient(135deg,#F472B6,#7C5CE6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">
+          79<span class="bigunit" style="-webkit-text-fill-color:rgba(255,255,255,0.3);">%</span>
+        </div>
+        <p class="ai d3" style="font-size:18px;opacity:0.7;margin-top:10px;">of all seats were empty at any given moment</p>
+
+        <div style="display:flex;gap:32px;margin-top:40px;flex-wrap:wrap;" class="ai d4">
+          <div>
+            <div style="font-size:52px;font-weight:700;background:linear-gradient(135deg,var(--gold-lt),var(--amber));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">4.8<span style="font-size:22px;-webkit-text-fill-color:rgba(255,255,255,0.3);">×</span></div>
+            <div style="font-size:12px;opacity:0.45;margin-top:4px;line-height:1.5;">seats available per person<br>present (minimum)</div>
+          </div>
+          <div style="width:1px;background:rgba(255,255,255,0.1);"></div>
+          <div>
+            <div style="font-size:52px;font-weight:700;background:linear-gradient(135deg,var(--gold-lt),var(--amber));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">6.5<span style="font-size:22px;-webkit-text-fill-color:rgba(255,255,255,0.3);">×</span></div>
+            <div style="font-size:12px;opacity:0.45;margin-top:4px;line-height:1.5;">seats available per person<br>present (average)</div>
+          </div>
+        </div>
+
+        <div class="why ai" style="margin-top:28px;background:rgba(124,92,230,0.12);border-color:rgba(124,92,230,0.25);">
+          <span class="why-icon">💸</span>
+          <div>
+            <strong>This is where your budget leaks.</strong> Every empty seat still incurs rent, energy, and maintenance costs. At 79% vacancy, roughly <span class="hl on-dark-bg">€0.79 of every €1</span> you spend on office space pays for chairs that no one sits in.
+          </div>
+        </div>
+      </div>
+
+      <div class="ai d3">
+        <div class="cbox" style="margin-bottom:14px;">
+          <span class="cbox-label">Seat utilization over 14 days</span>
+          <canvas id="chartSeats" height="210"></canvas>
+        </div>
+        <div class="cbox">
+          <span class="cbox-label">Max vs average vs vacancy</span>
+          <div class="prow">
+            <div class="pmeta"><span>Maximum utilization</span><strong>22%</strong></div>
+            <div class="ptrack"><div class="pfill" style="background:var(--amber);" data-w="22"></div></div>
+          </div>
+          <div class="prow">
+            <div class="pmeta"><span>Average utilization</span><strong>17%</strong></div>
+            <div class="ptrack"><div class="pfill" style="background:rgba(255,255,255,0.38);" data-w="17"></div></div>
+          </div>
+          <div class="prow">
+            <div class="pmeta"><span>Consistently empty</span><strong>79%</strong></div>
+            <div class="ptrack"><div class="pfill" style="background:var(--red);" data-w="79"></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════
+     06 — A TYPICAL DAY
+══════════════════════════════════════════════════ -->
+<section class="section s-snap grain" id="s6" data-label="Snapshot">
+  <div class="blob" style="width:400px;height:400px;background:rgba(209,107,28,0.08);right:-150px;top:50%;transform:translateY(-50%);"></div>
+
+  <div class="si">
+    <div class="ch-label ai"><div class="ch-line"></div><span class="ch-text">Chapter 05 — A typical day</span></div>
+    <h2 class="hl-lg ai d1">Tuesday, 5:00 pm.<br>Your most typical moment.</h2>
+    <p class="body-copy ai d2" style="margin-top:18px;color:rgba(255,255,255,0.65);">
+      We identified the counting moment closest to your average utilization and used it as the representative "honest snapshot" of how your office looks on a regular afternoon.
+    </p>
+
+    <div style="margin-top:44px;max-width:700px;" class="ai d3">
+      <div class="srow">
+        <div class="smeta"><span>Open plan space</span><span><strong>112</strong> / 332 seats</span></div>
+        <div class="strack"><div class="sfill" style="background:rgba(255,255,255,0.65);" data-w="34">34%</div></div>
+      </div>
+      <div class="srow">
+        <div class="smeta"><span>Meeting rooms</span><span><strong>36</strong> / 176 seats</span></div>
+        <div class="strack"><div class="sfill" style="background:var(--amber);" data-w="20">20%</div></div>
+      </div>
+      <div class="srow">
+        <div class="smeta"><span>Collaboration café</span><span><strong>28</strong> / 180 seats</span></div>
+        <div class="strack"><div class="sfill" style="background:var(--gold);" data-w="16">16%</div></div>
+      </div>
+      <div class="srow">
+        <div class="smeta"><span>External zones</span><span><strong>16</strong> / 63 seats</span></div>
+        <div class="strack"><div class="sfill" style="background:var(--green);" data-w="25">25%</div></div>
+      </div>
+      <div class="srow">
+        <div class="smeta"><span>Multi-room spaces</span><span><strong>7</strong> / 68 seats</span></div>
+        <div class="strack"><div class="sfill" style="background:var(--purple);" data-w="10">10%</div></div>
+      </div>
+      <div class="srow">
+        <div class="smeta"><span>Dedicated offices</span><span><strong>2</strong> / 44 seats</span></div>
+        <div class="strack"><div class="sfill" style="background:var(--rose);" data-w="5">5%</div></div>
+      </div>
+    </div>
+
+    <div class="why ai d4" style="margin-top:36px;">
+      <span class="why-icon">📸</span>
+      <div>
+        <strong>This is not a random screenshot.</strong> It's the moment in time that best represents your average utilization — making it the most honest, representative picture of how your office looks on any given day.
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════
+     07 — ROOM TYPES
+══════════════════════════════════════════════════ -->
+<section class="section s-rooms grain" id="s7" data-label="Room Types">
+  <div class="blob" style="width:380px;height:380px;background:rgba(209,107,28,0.07);left:-120px;bottom:-120px;"></div>
+
+  <div class="si">
+    <div class="ch-label ai"><div class="ch-line"></div><span class="ch-text">Chapter 06 — Room type breakdown</span></div>
+    <h2 class="hl-lg ai d1">256 spaces.<br>8 categories.</h2>
+
+    <div class="split ai d2" style="margin-top:44px;gap:56px;align-items:flex-start;">
+      <div>
+        <div class="cbox" style="max-width:310px;">
+          <span class="cbox-label">Distribution of room types</span>
+          <canvas id="chartRooms" height="280"></canvas>
+        </div>
+      </div>
+      <div style="flex:1;">
+        <div id="roomList"></div>
+        <div class="why ai" style="margin-top:28px;">
+          <span class="why-icon">🧩</span>
+          <div>
+            <strong>Room types tell you what to cut — and what to add.</strong> Your 26 meeting rooms are running at just 20% utilization. That's high-cost space you could convert, reduce, or repurpose at your next lease renewal.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════
+     08 — FLOOR BY FLOOR
+══════════════════════════════════════════════════ -->
+<section class="section s-floors grain" id="s8" data-label="Floors">
+  <div class="blob" style="width:500px;height:500px;background:rgba(209,107,28,0.06);right:-200px;top:50%;transform:translateY(-50%);"></div>
+
+  <div class="si">
+    <div class="ch-label ai"><div class="ch-line"></div><span class="ch-text">Chapter 07 — Floor by floor</span></div>
+    <h2 class="hl-lg ai d1">6 floors.<br>One story.</h2>
+
+    <div class="flr-grid ai d2">
+      <div class="flr-card">
+        <div class="flr-tag">Ground</div>
+        <div class="flr-num">01</div>
+        <div class="flr-bar-wrap"><div class="flr-bar" style="background:var(--amber);" data-h="45"></div></div>
+        <div class="flr-pct" style="color:var(--amber);">45%</div>
+        <div class="flr-sub">utilization</div>
+        <div class="flr-info">12 ws · 6 mtg<br>8 multi · 4 other</div>
+      </div>
+      <div class="flr-card">
+        <div class="flr-tag">Level 2</div>
+        <div class="flr-num">02</div>
+        <div class="flr-bar-wrap"><div class="flr-bar" style="background:var(--gold);" data-h="38"></div></div>
+        <div class="flr-pct" style="color:var(--gold);">38%</div>
+        <div class="flr-sub">utilization</div>
+        <div class="flr-info">18 ws · 4 mtg<br>6 multi · 2 other</div>
+      </div>
+      <div class="flr-card" style="background:rgba(124,92,230,0.1);border-color:rgba(124,92,230,0.3);">
+        <div class="flr-tag">Level 3</div>
+        <div class="flr-num" style="color:#A78BFA;">03</div>
+        <div class="flr-bar-wrap"><div class="flr-bar" style="background:#A78BFA;" data-h="62"></div></div>
+        <div class="flr-pct" style="color:#A78BFA;">62%</div>
+        <div class="flr-sub">utilization</div>
+        <div class="flr-info">22 ws · 5 mtg<br>4 multi · 3 other</div>
+      </div>
+      <div class="flr-card">
+        <div class="flr-tag">Level 4</div>
+        <div class="flr-num">04</div>
+        <div class="flr-bar-wrap"><div class="flr-bar" style="background:var(--sky);" data-h="28"></div></div>
+        <div class="flr-pct" style="color:var(--sky);">28%</div>
+        <div class="flr-sub">utilization</div>
+        <div class="flr-info">15 ws · 3 mtg<br>5 multi · 6 other</div>
+      </div>
+      <div class="flr-card">
+        <div class="flr-tag">Level 5</div>
+        <div class="flr-num">05</div>
+        <div class="flr-bar-wrap"><div class="flr-bar" style="background:var(--green);" data-h="31"></div></div>
+        <div class="flr-pct" style="color:var(--green);">31%</div>
+        <div class="flr-sub">utilization</div>
+        <div class="flr-info">20 ws · 4 mtg<br>3 multi · 5 other</div>
+      </div>
+      <div class="flr-card">
+        <div class="flr-tag">Top floor</div>
+        <div class="flr-num">06</div>
+        <div class="flr-bar-wrap"><div class="flr-bar" style="background:var(--red);" data-h="18"></div></div>
+        <div class="flr-pct" style="color:var(--red);">18%</div>
+        <div class="flr-sub">utilization</div>
+        <div class="flr-info">9 ws · 2 mtg<br>2 multi · 4 other</div>
+      </div>
+    </div>
+
+    <div class="why ai" style="margin-top:36px;">
+      <span class="why-icon">🏗️</span>
+      <div>
+        <strong>Floor 3 leads at 62%. Floor 6 barely registers at 18%.</strong> Consolidating activity to Floors 1–4 could allow you to decommission — or sublet — Floors 5 and 6 entirely, cutting HVAC, cleaning, and maintenance costs on two full floors immediately.
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════
+     09 — SPACE SCORE
+══════════════════════════════════════════════════ -->
+<section class="section s-score grain" id="s9" data-label="Space Score">
+  <div class="blob" style="width:600px;height:600px;background:rgba(235,184,40,0.07);right:-250px;bottom:-250px;"></div>
+
+  <div class="si">
+    <div class="ch-label ai"><div class="ch-line" style="background:var(--gold);"></div><span class="ch-text">Chapter 08 — Space efficiency score</span></div>
+    <h2 class="hl-lg ai d1">How efficiently<br>is your office run?</h2>
+
+    <div class="score-wrap">
+      <div class="ai d2">
+        <div class="score-ring">
+          <div class="score-grade">C+</div>
+          <div class="score-sub">Space Efficiency</div>
+        </div>
+        <div class="score-num">21<span style="font-size:26px;font-weight:300;opacity:0.35;">/100</span></div>
+        <div class="score-cap">Overall score</div>
+      </div>
+
+      <div class="badge-grid ai d3">
+        <div class="badge">
+          <div class="bdg-icon">🏆</div>
+          <div><div class="bdg-title">Peak Day Champion</div><div class="bdg-desc">75% attendance on your best day</div></div>
+        </div>
+        <div class="badge locked">
+          <div class="bdg-icon">⚡</div>
+          <div><div class="bdg-title">High Voltage</div><div class="bdg-desc">Locked — reach 50% avg seat use</div></div>
+        </div>
+        <div class="badge locked">
+          <div class="bdg-icon">🌱</div>
+          <div><div class="bdg-title">Space Minimalist</div><div class="bdg-desc">Locked — reduce to 1.5× seats/person</div></div>
+        </div>
+        <div class="badge">
+          <div class="bdg-icon">📊</div>
+          <div><div class="bdg-title">Data Pioneer</div><div class="bdg-desc">First office audit completed</div></div>
+        </div>
+        <div class="badge locked">
+          <div class="bdg-icon">🎯</div>
+          <div><div class="bdg-title">Zone Optimizer</div><div class="bdg-desc">Locked — all zones above 40%</div></div>
+        </div>
+        <div class="badge">
+          <div class="bdg-icon">🔍</div>
+          <div><div class="bdg-title">Transparency Award</div><div class="bdg-desc">46 observations on record</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="why ai" style="margin-top:36px;background:rgba(235,184,40,0.1);border-color:rgba(235,184,40,0.25);">
+      <span class="why-icon">🎮</span>
+      <div>
+        <strong>Your score reflects seat utilization (17%), attendance efficiency (56%), and space-to-person ratio (3.7×).</strong> A C+ signals clear room for improvement — but the fact that you're measuring at all puts you ahead of most organizations. Act on these insights and watch your score climb.
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════
+     10 — KEY INSIGHTS
+══════════════════════════════════════════════════ -->
+<section class="section s-insights" id="s10" data-label="Insights">
+  <div class="si">
+    <div class="ch-label ai"><div class="ch-line"></div><span class="ch-text" style="color:var(--txt-l);">Chapter 09 — What this means for you</span></div>
+    <h2 class="hl-lg ai d1" style="color:var(--txt-d);">The "so what?"</h2>
+    <p class="body-copy ai d2">Numbers are only useful when they drive decisions. Here's what your data is telling you — in plain language.</p>
+
+    <div class="ins-grid ai d3">
+      <div class="ins-card ic-a">
+        <div class="ic-emoji">🏢</div>
+        <div class="ic-title">You're over-seated by 3×</div>
+        <div class="ic-stat" style="color:var(--amber);">3.7×</div>
+        <div class="ic-desc">You have 3.7 seats per employee. The global standard is 1.0–1.2×. You could reduce your seating by 65% and still comfortably accommodate everyone who walks in on your busiest recorded day.</div>
+      </div>
+      <div class="ins-card ic-g">
+        <div class="ic-emoji">💰</div>
+        <div class="ic-title">79% of your rent pays for empty chairs</div>
+        <div class="ic-stat" style="color:var(--amber-lt);">79%</div>
+        <div class="ic-desc">On average, nearly 4 in every 5 seats sit vacant. If your office costs €X per month, approximately €0.79X goes toward space that no one is using — every single month, without exception.</div>
+      </div>
+      <div class="ins-card ic-p">
+        <div class="ic-emoji">📍</div>
+        <div class="ic-title">Floor 3 is your sweet spot</div>
+        <div class="ic-stat" style="color:var(--purple);">62%</div>
+        <div class="ic-desc">Floor 3 leads all floors with 62% utilization, while Floor 6 registers just 18%. Consolidating to 3–4 active floors could meaningfully reduce operational costs with zero impact on productivity.</div>
+      </div>
+      <div class="ins-card ic-r">
+        <div class="ic-emoji">🗓️</div>
+        <div class="ic-title">Fridays are ghost town days</div>
+        <div class="ic-stat" style="color:var(--red);">~40%</div>
+        <div class="ic-desc">Friday attendance drops to around 40% of normal weekday levels. You now have the data to formalize flexible working policies — and potentially negotiate reduced operating costs for low-attendance days.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════
+     11 — RECOMMENDATIONS
+══════════════════════════════════════════════════ -->
+<section class="section s-recs grain" id="s11" data-label="Recommendations">
+  <div class="blob" style="width:450px;height:450px;background:rgba(209,107,28,0.07);right:-180px;bottom:-180px;"></div>
+
+  <div class="si">
+    <div class="ch-label ai"><div class="ch-line"></div><span class="ch-text">Chapter 10 — Three moves to make now</span></div>
+    <h2 class="hl-lg ai d1">Your action plan.</h2>
+
+    <div class="rec-list ai d2">
+      <div class="rec-card">
+        <div class="rec-n">01</div>
+        <div>
+          <div class="rec-title">Right-size your seating</div>
+          <div class="rec-body">Based on your peak attendance of 227 people and a generous 1.2× buffer, you need approximately <span class="hl">272 seats</span> — not 1,275. That's a potential reduction of 78% of your current seating footprint. Free up that floor space for better use, flexible zones, or subletting at your next lease renewal.</div>
+        </div>
+      </div>
+      <div class="rec-card">
+        <div class="rec-n">02</div>
+        <div>
+          <div class="rec-title">Consolidate to your active floors</div>
+          <div class="rec-body">Floors 1, 2, and 3 carry the majority of your activity. <span class="hl">Decommission or repurpose Floors 5 and 6</span> — together they average under 25% utilization. Switching off HVAC, cleaning schedules, and lighting on two full floors can reduce operational spend within weeks, not months.</div>
+        </div>
+      </div>
+      <div class="rec-card">
+        <div class="rec-n">03</div>
+        <div>
+          <div class="rec-title">Run a follow-up study in 6 months</div>
+          <div class="rec-body">Office behaviour evolves — especially as hybrid work policies shift. A <span class="hl">second study in 6 months</span> will confirm these trends, measure the impact of any changes you've made, and give you the longitudinal data needed for board-level decisions on your real estate footprint.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════
+     12 — OUTRO
+══════════════════════════════════════════════════ -->
+<section class="section s-outro grain" id="s12" data-label="Outro"
+  style="align-items:center;text-align:center;">
+  <div class="blob" style="width:700px;height:700px;background:rgba(209,107,28,0.05);left:50%;top:50%;transform:translate(-50%,-50%);"></div>
+
+  <div class="si" style="display:flex;flex-direction:column;align-items:center;max-width:680px;margin:0 auto;">
+    <!-- Logo -->
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:56px;" class="ai">
+      <svg width="30" height="34" viewBox="0 0 30 34" fill="none">
+        <defs><linearGradient id="lg-outro" x1="15" y1="0" x2="15" y2="34" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stop-color="#F5D462"/><stop offset="100%" stop-color="#D16B1C"/>
+        </linearGradient></defs>
+        <path d="M15 0 L30 30 L0 30 Z" fill="url(#lg-outro)"/>
+      </svg>
+      <span style="font-size:18px;font-weight:600;color:#fff;letter-spacing:-0.3px;">AreaSim</span>
+    </div>
+
+    <div class="ch-label ai d1" style="justify-content:center;">
+      <div class="ch-line"></div>
+      <span class="ch-text">Your office story, told in data</span>
+      <div class="ch-line"></div>
+    </div>
+
+    <h2 class="hl-xl ai d2" style="margin-bottom:24px;">Ready to<br>optimize?</h2>
+
+    <p class="body-copy ai d3" style="text-align:center;margin:0 auto 8px;max-width:500px;">
+      This report is the start of your workspace transformation. The data is clear. The opportunity is significant. Now it's time to act on it.
+    </p>
+
+    <div class="cta-row ai d4">
+      <div class="cta-a">Book a strategy session →</div>
+      <div class="cta-b">Schedule the next study</div>
+    </div>
+
+    <div style="margin-top:80px;padding-top:32px;border-top:1px solid rgba(255,255,255,0.07);font-family:'Space Mono',monospace;font-size:10px;opacity:0.22;letter-spacing:1.5px;text-transform:uppercase;" class="ai d5">
+      © 2026 AreaSim &nbsp;·&nbsp; Bodø Municipality Office Report &nbsp;·&nbsp; Observation: 8–22 May 2026
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════
+     JAVASCRIPT
+══════════════════════════════════════════════════ -->
+<script>
+// ── LOADER ──────────────────────────────────────────
+window.addEventListener('load', () => {
+  const fill   = document.getElementById('ldFill');
+  const loader = document.getElementById('loader');
+  setTimeout(() => { fill.style.width = '100%'; }, 80);
+  setTimeout(() => { loader.classList.add('out'); }, 1700);
+  setTimeout(() => { loader.style.display = 'none'; }, 2500);
+});
+
+// ── SECTIONS + NAV DOTS ─────────────────────────────
+const sections = Array.from(document.querySelectorAll('.section'));
+const navWrap  = document.getElementById('navdots');
+
+sections.forEach((s, i) => {
+  const d = document.createElement('div');
+  d.className = 'ndot';
+  d.title = s.dataset.label || '';
+  d.addEventListener('click', () => s.scrollIntoView({ behavior: 'smooth' }));
+  navWrap.appendChild(d);
+});
+const dots = navWrap.querySelectorAll('.ndot');
+
+// ── SCROLL PROGRESS + ACTIVE DOT ────────────────────
+const topbar = document.getElementById('topbar');
+function onScroll() {
+  const scrolled = window.scrollY;
+  const total    = document.body.scrollHeight - window.innerHeight;
+  topbar.style.width = (scrolled / total * 100) + '%';
+  let ai = 0;
+  sections.forEach((s, i) => {
+    if (s.getBoundingClientRect().top <= window.innerHeight * 0.52) ai = i;
+  });
+  dots.forEach((d, i) => d.classList.toggle('active', i === ai));
+}
+window.addEventListener('scroll', onScroll, { passive: true });
+onScroll();
+
+// ── INTERSECTION OBSERVER ───────────────────────────
+const counted = new Set();
+const io = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (!e.isIntersecting) return;
+    e.target.classList.add('in');
+    // count-ups
+    e.target.querySelectorAll('[data-countup]').forEach(el => {
+      if (counted.has(el)) return;
+      counted.add(el);
+      const target = +el.dataset.countup;
+      const dur = 1400, step = 16;
+      let cur = 0;
+      const t = setInterval(() => {
+        cur += target / (dur / step);
+        if (cur >= target) { cur = target; clearInterval(t); }
+        el.textContent = Math.round(cur).toLocaleString();
+      }, step);
+    });
+    // progress bars
+    ['[data-w].pfill','[data-w].sfill','[data-w].rfill'].forEach(sel => {
+      e.target.querySelectorAll(sel).forEach(el => { el.style.width = el.dataset.w + '%'; });
+    });
+    // floor bars
+    e.target.querySelectorAll('.flr-bar[data-h]').forEach(el => {
+      el.style.height = el.dataset.h + '%';
+    });
+  });
+}, { threshold: 0.12 });
+
+document.querySelectorAll('.ai').forEach(el => io.observe(el));
+// Also observe progress fill elements directly
+document.querySelectorAll('.pfill,.sfill,.rfill,.flr-bar').forEach(el => io.observe(el));
+
+// ── CHART.JS DEFAULTS ──────────────────────────────
+Chart.defaults.font.family = "'Space Grotesk', sans-serif";
+Chart.defaults.font.size   = 12;
+
+// ── ATTENDANCE CHART ────────────────────────────────
+const attendCtx = document.getElementById('chartAttend');
+if (attendCtx) {
+  const days = ['Mon 8','Tue 9','Wed 10','Thu 11','Mon 15','Thu 18','Fri 19','Mon 22'];
+  const vals = [195, 218, 227, 208, 205, 215, 173, 196];
+  const peak = Math.max(...vals);
+  new Chart(attendCtx, {
+    type: 'bar',
+    data: {
+      labels: days,
+      datasets: [{
+        data: vals,
+        backgroundColor: vals.map(v => v === peak
+          ? 'rgba(209,107,28,0.95)'
+          : 'rgba(209,107,28,0.22)'
+        ),
+        borderRadius: 8,
+        borderSkipped: false,
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: ctx => ` ${ctx.raw} people (${Math.round(ctx.raw / 370 * 100)}%)`
+          },
+          backgroundColor: '#1A1510',
+          titleColor: '#fff',
+          bodyColor: 'rgba(255,255,255,0.7)',
+          padding: 12,
+          cornerRadius: 10,
+        }
+      },
+      scales: {
+        y: {
+          min: 0, max: 400,
+          grid: { color: 'rgba(0,0,0,0.05)' },
+          ticks: { color: 'rgba(0,0,0,0.35)', font: { size: 11 } }
+        },
+        x: {
+          grid: { display: false },
+          ticks: { color: 'rgba(0,0,0,0.35)', font: { size: 11 } }
+        }
+      }
+    }
+  });
+}
+
+// ── SEAT UTILIZATION CHART ──────────────────────────
+const seatCtx = document.getElementById('chartSeats');
+if (seatCtx) {
+  const labels = ['Mon 8','Tue 9','Wed 10','Thu 11','Mon 15','Thu 18','Fri 19','Mon 22'];
+  const used   = [198, 222, 235, 210, 208, 218, 175, 200];
+  new Chart(seatCtx, {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [
+        {
+          label: 'Seats in use',
+          data: used,
+          borderColor: '#D16B1C',
+          backgroundColor: 'rgba(209,107,28,0.12)',
+          fill: true,
+          tension: 0.42,
+          borderWidth: 2.5,
+          pointBackgroundColor: '#EBB828',
+          pointBorderColor: '#D16B1C',
+          pointRadius: 5,
+          pointHoverRadius: 7,
+        },
+        {
+          label: 'Total capacity (1,275)',
+          data: new Array(8).fill(1275),
+          borderColor: 'rgba(255,255,255,0.15)',
+          backgroundColor: 'transparent',
+          borderDash: [6, 4],
+          borderWidth: 1.5,
+          pointRadius: 0,
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: ctx => ` ${ctx.dataset.label}: ${ctx.raw.toLocaleString()}`
+          },
+          backgroundColor: '#12100A',
+          titleColor: '#fff',
+          bodyColor: 'rgba(255,255,255,0.65)',
+          padding: 12,
+          cornerRadius: 10,
+        }
+      },
+      scales: {
+        y: {
+          min: 0, max: 1400,
+          grid: { color: 'rgba(255,255,255,0.06)' },
+          ticks: { color: 'rgba(255,255,255,0.3)', font: { size: 11 } }
+        },
+        x: {
+          grid: { display: false },
+          ticks: { color: 'rgba(255,255,255,0.3)', font: { size: 11 } }
+        }
+      }
+    }
+  });
+}
+
+// ── ROOM TYPE DONUT ─────────────────────────────────
+const roomData = [
+  { name: 'Quest Zones',       count: 67, color: '#D16B1C' },
+  { name: 'Other Rooms',       count: 54, color: '#A78BFA' },
+  { name: 'Open Landscapes',   count: 45, color: '#EBB828' },
+  { name: 'Work Cafés',        count: 34, color: '#34D399' },
+  { name: 'Meeting Rooms',     count: 26, color: '#FB923C' },
+  { name: 'Multirooms',        count: 12, color: '#38BDF8' },
+  { name: 'External Zones',    count: 10, color: '#FB7185' },
+  { name: 'Dedicated Offices', count:  8, color: '#F5D462' },
+];
+
+const roomCtx = document.getElementById('chartRooms');
+if (roomCtx) {
+  new Chart(roomCtx, {
+    type: 'doughnut',
+    data: {
+      labels: roomData.map(r => r.name),
+      datasets: [{
+        data: roomData.map(r => r.count),
+        backgroundColor: roomData.map(r => r.color),
+        borderColor: '#241E12',
+        borderWidth: 3,
+        hoverOffset: 10,
+      }]
+    },
+    options: {
+      responsive: true, cutout: '64%',
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: ctx => ` ${ctx.label}: ${ctx.raw} rooms (${Math.round(ctx.raw / 256 * 100)}%)`
+          },
+          backgroundColor: '#12100A',
+          titleColor: '#fff',
+          bodyColor: 'rgba(255,255,255,0.65)',
+          padding: 12,
+          cornerRadius: 10,
+        }
+      }
+    }
+  });
+}
+
+// ── ROOM LIST ───────────────────────────────────────
+const roomList = document.getElementById('roomList');
+if (roomList) {
+  const max = Math.max(...roomData.map(r => r.count));
+  roomData.forEach(r => {
+    const pct = Math.round(r.count / max * 100);
+    const el  = document.createElement('div');
+    el.className = 'rrow';
+    el.innerHTML = `
+      <div class="rswatch" style="background:${r.color};"></div>
+      <div class="rdetail">
+        <div class="rmeta">
+          <span>${r.name}</span>
+          <span style="opacity:0.45;">${r.count} rooms</span>
+        </div>
+        <div class="rtrack">
+          <div class="rfill" style="background:${r.color};width:0%;" data-w="${pct}"></div>
+        </div>
+      </div>`;
+    roomList.appendChild(el);
+    // observe the fill element
+    io.observe(el.querySelector('.rfill'));
+  });
+}
+
+// ── EXPORT: PDF ─────────────────────────────────────
+async function exportPDF() {
+  const btn = document.querySelector('.xb-pdf');
+  btn.textContent = 'Building…'; btn.disabled = true;
+  const { jsPDF } = window.jspdf;
+  const pdf = new jsPDF({ orientation: 'landscape', unit: 'px', format: [1280, 720] });
+  for (let i = 0; i < sections.length; i++) {
+    const canvas = await html2canvas(sections[i], {
+      scale: 1.4, useCORS: true, logging: false,
+      backgroundColor: null, width: 1280, height: 720,
+    });
+    if (i > 0) pdf.addPage([1280, 720], 'landscape');
+    pdf.addImage(canvas.toDataURL('image/jpeg', 0.9), 'JPEG', 0, 0, 1280, 720);
+  }
+  pdf.save('AreaSim-Bodø-Municipality-Report-2026.pdf');
+  btn.innerHTML = `<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M8 2v8M5 7l3 3 3-3M2 12v1a1 1 0 001 1h10a1 1 0 001-1v-1"/></svg> PDF`;
+  btn.disabled = false;
+}
+
+// ── EXPORT: DOC ─────────────────────────────────────
+function exportDOC() {
+  const html = `<html xmlns:o='urn:schemas-microsoft-com:office:office'
+    xmlns:w='urn:schemas-microsoft-com:office:word'
+    xmlns='http://www.w3.org/TR/REC-html40'>
+  <head><meta charset='UTF-8'>
+  <style>
+    body{font-family:Calibri,sans-serif;color:#1A1510;line-height:1.6;}
+    h1{font-size:36pt;color:#D16B1C;margin-bottom:6pt;}
+    h2{font-size:22pt;color:#1A1510;margin-top:28pt;border-bottom:2px solid #EBB828;padding-bottom:6pt;}
+    h3{font-size:14pt;color:#D16B1C;margin-top:20pt;}
+    p{font-size:11pt;margin:6pt 0;}
+    table{border-collapse:collapse;width:100%;margin:14pt 0;}
+    th{background:#1A1510;color:#fff;padding:9pt 12pt;font-size:10pt;text-align:left;}
+    td{border:1px solid #e0d8cc;padding:8pt 12pt;font-size:10pt;}
+    tr:nth-child(even) td{background:#FAF8F3;}
+    .stat{font-size:36pt;font-weight:bold;color:#D16B1C;}
+    .why{background:#FFF1E3;border-left:4px solid #D16B1C;padding:12pt 16pt;margin:14pt 0;font-size:10pt;}
+    .footer{color:#9A8A70;font-size:9pt;margin-top:40pt;border-top:1px solid #e0d8cc;padding-top:12pt;}
+  </style></head><body>
+  <h1>AreaSim — Office Intelligence Report 2026</h1>
+  <p><b>Organisation:</b> Bodø Municipality &nbsp;|&nbsp; <b>Period:</b> 8–22 May 2026 &nbsp;|&nbsp; <b>Snapshots:</b> 46</p>
+  <h2>Building Overview</h2>
+  <table><tr><th>Metric</th><th>Value</th><th>Industry Benchmark</th></tr>
+  <tr><td>Total employees</td><td>370</td><td>—</td></tr>
+  <tr><td>Total seats</td><td>1,275</td><td>—</td></tr>
+  <tr><td>Number of floors</td><td>6</td><td>—</td></tr>
+  <tr><td>Seats per employee</td><td>3.7×</td><td>1.0–1.2×</td></tr>
+  <tr><td>Total rooms and zones</td><td>256</td><td>—</td></tr></table>
+  <div class="why">💡 <b>Why this matters:</b> At 3.7 seats per person — roughly 3× the global standard — your office is significantly over-provisioned from the outset.</div>
+  <h2>Attendance Analysis</h2>
+  <p class="stat">75%</p>
+  <p>Peak daily attendance: <b>227 of 370 employees (75%)</b></p>
+  <p>Average daily attendance: <b>208 of 370 employees (56%)</b></p>
+  <div class="why">📊 <b>Why this matters:</b> Your building is designed as if 370 people arrive every morning. On average, only 208 do. That gap represents substantial overcapacity.</div>
+  <h2>Seat Utilization</h2>
+  <p class="stat">79%</p>
+  <p>Maximum seat utilization: <b>22%</b> &nbsp;|&nbsp; Average seat utilization: <b>17%</b></p>
+  <p>Average vacancy: <b>79% of all seats empty at any given moment</b></p>
+  <p>Average seats available per present employee: <b>6.5×</b></p>
+  <div class="why">💸 <b>Why this matters:</b> At 79% vacancy, roughly €0.79 of every €1 spent on office space pays for seats no one is sitting in.</div>
+  <h2>Typical Day Snapshot — Tuesday at 5:00 pm</h2>
+  <table><tr><th>Room Type</th><th>Seats Used</th><th>Total Seats</th><th>Utilization</th></tr>
+  <tr><td>Open plan space</td><td>112</td><td>332</td><td>34%</td></tr>
+  <tr><td>Meeting rooms</td><td>36</td><td>176</td><td>20%</td></tr>
+  <tr><td>Collaboration café</td><td>28</td><td>180</td><td>16%</td></tr>
+  <tr><td>External zones</td><td>16</td><td>63</td><td>25%</td></tr>
+  <tr><td>Multi-room spaces</td><td>7</td><td>68</td><td>10%</td></tr>
+  <tr><td>Dedicated offices</td><td>2</td><td>44</td><td>5%</td></tr></table>
+  <h2>Room Type Breakdown — 256 rooms total</h2>
+  <table><tr><th>Room Type</th><th>Rooms</th><th>Share</th></tr>
+  <tr><td>Quest Zones</td><td>67</td><td>26%</td></tr>
+  <tr><td>Other Rooms/Zones</td><td>54</td><td>21%</td></tr>
+  <tr><td>Open Landscapes</td><td>45</td><td>18%</td></tr>
+  <tr><td>Work Cafés</td><td>34</td><td>13%</td></tr>
+  <tr><td>Meeting Rooms</td><td>26</td><td>10%</td></tr>
+  <tr><td>Multirooms</td><td>12</td><td>5%</td></tr>
+  <tr><td>External Zones</td><td>10</td><td>4%</td></tr>
+  <tr><td>Dedicated Offices</td><td>8</td><td>3%</td></tr></table>
+  <h2>Floor-by-Floor Analysis</h2>
+  <table><tr><th>Floor</th><th>Utilization</th><th>Workspaces</th><th>Meeting Rooms</th><th>Multi-rooms</th><th>Other</th></tr>
+  <tr><td>Floor 01 (Ground)</td><td>45%</td><td>12</td><td>6</td><td>8</td><td>4</td></tr>
+  <tr><td>Floor 02</td><td>38%</td><td>18</td><td>4</td><td>6</td><td>2</td></tr>
+  <tr><td>Floor 03</td><td>62% ★ Busiest</td><td>22</td><td>5</td><td>4</td><td>3</td></tr>
+  <tr><td>Floor 04</td><td>28%</td><td>15</td><td>3</td><td>5</td><td>6</td></tr>
+  <tr><td>Floor 05</td><td>31%</td><td>20</td><td>4</td><td>3</td><td>5</td></tr>
+  <tr><td>Floor 06 (Top)</td><td>18%</td><td>9</td><td>2</td><td>2</td><td>4</td></tr></table>
+  <div class="why">🏗️ <b>Why this matters:</b> Floor 3 is the busiest (62%) while Floor 6 is nearly unused (18%). Consolidating to 3–4 floors could eliminate operating costs on entire floors.</div>
+  <h2>Space Efficiency Score — C+ (21/100)</h2>
+  <p>Score components: Seat utilization (17%) · Attendance efficiency (56%) · Space-to-person ratio (3.7×)</p>
+  <h2>Recommendations</h2>
+  <h3>01 — Right-size your seating</h3>
+  <p>Based on peak attendance of 227 and a 1.2× buffer, you need ~272 seats — not 1,275. A 78% reduction in seating footprint is achievable while still accommodating everyone on your busiest days.</p>
+  <h3>02 — Consolidate to your active floors</h3>
+  <p>Decommission or repurpose Floors 5 and 6. Together they average under 25% utilization. This could eliminate HVAC, cleaning, and maintenance costs on two full floors immediately.</p>
+  <h3>03 — Run a follow-up study in 6 months</h3>
+  <p>A second study confirms trends, measures the impact of changes made, and provides the longitudinal data needed for board-level real estate decisions.</p>
+  <div class="footer">© 2026 AreaSim &nbsp;·&nbsp; Bodø Municipality Office Report &nbsp;·&nbsp; Observation period: 8–22 May 2026</div>
+  </body></html>`;
+  const blob = new Blob(['\ufeff', html], { type: 'application/msword' });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href = url; a.download = 'AreaSim-Bodø-Municipality-Report-2026.doc';
+  a.click(); URL.revokeObjectURL(url);
+}
+
+// ── EXPORT: PPT ─────────────────────────────────────
+function exportPPT() {
+  const btn = document.querySelector('.xb-ppt');
+  const orig = btn.innerHTML;
+  btn.textContent = 'Building…'; btn.disabled = true;
+
+  function go() {
+    const pptx = new PptxGenJS();
+    pptx.layout  = 'LAYOUT_WIDE';
+    pptx.author  = 'AreaSim';
+    pptx.company = 'AreaSim';
+    pptx.title   = 'Bodø Municipality — Office Report 2026';
+
+    const A  = 'D16B1C', G  = 'EBB828', DK = '100E08';
+    const W  = 'FFFFFF', CR = 'FAF8F3';
+
+    // S1 Cover
+    const s1 = pptx.addSlide(); s1.background = { color: DK };
+    s1.addText('AreaSim', { x:0.5, y:0.45, w:3, h:0.4, color:W, fontSize:16, bold:true });
+    s1.addText('OFFICE INTELLIGENCE REPORT · 2026', { x:0.5, y:0.95, w:9, h:0.28, color:A, fontSize:10, charSpacing:2 });
+    s1.addText('Bodø\nMunicipality', { x:0.5, y:1.4, w:9, h:3.5, color:W, fontSize:72, bold:true, lineSpacingMultiple:0.88 });
+    s1.addText('Your office, unwrapped.', { x:0.5, y:5.1, w:9, h:0.5, color:'8A7A65', fontSize:20 });
+    s1.addShape(pptx.shapes.RECTANGLE, { x:0.5, y:5.75, w:9, h:0.03, fill:{color:A}, line:{color:A} });
+    s1.addText('14 days · 46 snapshots · 6 floors · 370 employees', { x:0.5, y:5.9, w:9, h:0.4, color:'5A4A35', fontSize:12, charSpacing:1 });
+
+    // S2 Building
+    const s2 = pptx.addSlide(); s2.background = { color:CR };
+    s2.addText('CHAPTER 02 — YOUR BUILDING AT A GLANCE', { x:0.5, y:0.38, w:9, h:0.26, color:'9A8A70', fontSize:9, charSpacing:2 });
+    s2.addText('Meet your office.', { x:0.5, y:0.75, w:9, h:0.9, color:DK, fontSize:42, bold:true });
+    [['370','Employees','Total headcount'],['1,275','Total seats','Across 6 floors'],['6','Floors','All measured'],['3.7×','Seats/person','Avg: 1.0–1.2×']].forEach(([v,n,s],i) => {
+      const x = 0.5 + i * 2.35;
+      s2.addShape(pptx.shapes.ROUNDED_RECTANGLE, { x, y:2.0, w:2.2, h:2.6, fill:{color:W}, line:{color:'E0D8CC',pt:1}, rectRadius:0.15 });
+      s2.addText(v, { x, y:2.15, w:2.2, h:1.0, color:DK, fontSize:36, bold:true, align:'center' });
+      s2.addText(n, { x, y:3.15, w:2.2, h:0.38, color:'5A4A35', fontSize:13, bold:true, align:'center' });
+      s2.addText(s, { x, y:3.55, w:2.2, h:0.32, color:'9A8A70', fontSize:10, align:'center' });
+    });
+    s2.addShape(pptx.shapes.ROUNDED_RECTANGLE, { x:0.5, y:4.75, w:9, h:0.9, fill:{color:'FFF1E3'}, line:{color:A,pt:1.5}, rectRadius:0.1 });
+    s2.addText('🔑  3.7 seats per person is ~3× the global benchmark of 1.0–1.2×. You could reduce seating by 65% and still seat everyone who attends on your busiest day.', { x:0.7, y:4.8, w:8.6, h:0.8, color:DK, fontSize:11 });
+
+    // S3 Attendance
+    const s3 = pptx.addSlide(); s3.background = { color:'2A1A06' };
+    s3.addText('CHAPTER 03 — WHO SHOWED UP', { x:0.5, y:0.38, w:9, h:0.26, color:'8A6030', fontSize:9, charSpacing:2 });
+    s3.addText('On your best day,', { x:0.5, y:0.85, w:7, h:0.7, color:W, fontSize:26, bold:true });
+    s3.addText('75%', { x:0.5, y:1.5, w:7, h:2.4, color:G, fontSize:96, bold:true });
+    s3.addText('of your team came in — 227 of 370 people.', { x:0.5, y:4.05, w:7, h:0.65, color:'C0A070', fontSize:18 });
+    s3.addShape(pptx.shapes.ROUNDED_RECTANGLE, { x:0.5, y:4.9, w:7, h:0.85, fill:{color:'3A2010'}, line:{color:A,pt:1}, rectRadius:0.1 });
+    s3.addText('📊  Average attendance: 56% (208 people). Your office is built for 370 arriving daily. The data says otherwise.', { x:0.7, y:4.95, w:6.6, h:0.75, color:'C0A070', fontSize:11 });
+    [['75%','Peak'],['56%','Average']].forEach(([v,l],i) => {
+      s3.addShape(pptx.shapes.ROUNDED_RECTANGLE, { x:7.6, y:1.5 + i * 1.6, w:2.2, h:1.4, fill:{color:'3A2010'}, line:{color:A,pt:1.5}, rectRadius:0.12 });
+      s3.addText(`${v}\n${l}`, { x:7.6, y:1.55 + i * 1.6, w:2.2, h:1.3, color:G, fontSize:20, bold:true, align:'center' });
+    });
+
+    // S4 Seat Reality
+    const s4 = pptx.addSlide(); s4.background = { color:'0E0C18' };
+    s4.addText('CHAPTER 04 — THE SEAT REALITY', { x:0.5, y:0.38, w:9, h:0.26, color:'8870CC', fontSize:9, charSpacing:2 });
+    s4.addText('Even when people come in —\nmost seats stay empty.', { x:0.5, y:0.78, w:9, h:1.3, color:W, fontSize:30, bold:true });
+    s4.addText('79%', { x:0.5, y:2.05, w:5.5, h:2.2, color:'A78BFA', fontSize:96, bold:true });
+    s4.addText('of all seats empty at any given moment', { x:0.5, y:4.3, w:5.5, h:0.5, color:'8870CC', fontSize:16 });
+    [['4.8×','seats/person min'],['6.5×','seats/person avg'],['22%','max utilization'],['17%','avg utilization']].forEach(([v,l],i) => {
+      const x = 6.1 + (i % 2) * 1.95, y = 1.4 + Math.floor(i / 2) * 1.65;
+      s4.addShape(pptx.shapes.ROUNDED_RECTANGLE, { x, y, w:1.8, h:1.5, fill:{color:'1A1530'}, line:{color:'4A3A8A',pt:1}, rectRadius:0.1 });
+      s4.addText(`${v}\n${l}`, { x, y:y+0.1, w:1.8, h:1.3, color:'A78BFA', fontSize:15, bold:true, align:'center' });
+    });
+
+    // S5 Score
+    const s5 = pptx.addSlide(); s5.background = { color:'160C02' };
+    s5.addText('CHAPTER 08 — SPACE EFFICIENCY SCORE', { x:0.5, y:0.38, w:9, h:0.26, color:'8A6020', fontSize:9, charSpacing:2 });
+    s5.addText('How efficiently is your office run?', { x:0.5, y:0.78, w:9, h:0.85, color:W, fontSize:36, bold:true });
+    s5.addShape(pptx.shapes.OVAL, { x:0.5, y:1.75, w:3.8, h:3.8, line:{color:G,pt:2}, fill:{color:'1E1004'} });
+    s5.addText('C+', { x:0.5, y:1.85, w:3.8, h:2.4, color:G, fontSize:100, bold:true, align:'center' });
+    s5.addText('Space Efficiency', { x:0.5, y:4.2, w:3.8, h:0.4, color:'8A6020', fontSize:12, align:'center' });
+    s5.addText('21 / 100', { x:0.5, y:4.7, w:3.8, h:0.5, color:W, fontSize:20, bold:true, align:'center' });
+    [['🏆 Peak Day Champion','75% attendance on best day'],['📊 Data Pioneer','First audit completed'],['🔍 Transparency Award','46 obs. on record']].forEach(([t,d],i) => {
+      s5.addShape(pptx.shapes.ROUNDED_RECTANGLE, { x:4.8, y:1.75 + i * 1.3, w:4.7, h:1.1, fill:{color:'2A1A06'}, line:{color:'5A3A10',pt:1}, rectRadius:0.1 });
+      s5.addText(t, { x:5.0, y:1.82 + i * 1.3, w:4.3, h:0.45, color:G, fontSize:13, bold:true });
+      s5.addText(d, { x:5.0, y:2.3 + i * 1.3, w:4.3, h:0.38, color:'8A6020', fontSize:11 });
+    });
+
+    // S6 Recommendations
+    const s6 = pptx.addSlide(); s6.background = { color:'18150E' };
+    s6.addText('CHAPTER 10 — YOUR ACTION PLAN', { x:0.5, y:0.38, w:9, h:0.26, color:'8A7A60', fontSize:9, charSpacing:2 });
+    s6.addText('Three moves to make now.', { x:0.5, y:0.78, w:9, h:0.82, color:W, fontSize:38, bold:true });
+    [['01','Right-size your seating','You need ~272 seats — not 1,275. A 78% reduction in seating is achievable while still accommodating peak attendance.'],
+     ['02','Consolidate to active floors','Decommission Floors 5 & 6 (avg <25% use). Eliminates HVAC, cleaning, and maintenance costs on two full floors.'],
+     ['03','Run a follow-up study in 6 months','Confirms trends, measures the impact of changes, and provides longitudinal data for board-level real estate decisions.']
+    ].forEach(([n,t,b],i) => {
+      const y = 1.75 + i * 1.38;
+      s6.addShape(pptx.shapes.ROUNDED_RECTANGLE, { x:0.5, y, w:9, h:1.24, fill:{color:'221C10'}, line:{color:A,pt:1}, rectRadius:0.12 });
+      s6.addText(n, { x:0.65, y:y+0.05, w:0.85, h:1.1, color:A, fontSize:44, bold:true });
+      s6.addText(t, { x:1.65, y:y+0.08, w:7.7, h:0.45, color:W, fontSize:16, bold:true });
+      s6.addText(b, { x:1.65, y:y+0.58, w:7.7, h:0.58, color:'8A7A60', fontSize:11 });
+    });
+
+    pptx.writeFile({ fileName: 'AreaSim-Bodø-Municipality-Report-2026.pptx' })
+      .then(() => { btn.innerHTML = orig; btn.disabled = false; })
+      .catch(err => { console.error(err); btn.innerHTML = orig; btn.disabled = false; });
+  }
+
+  if (typeof PptxGenJS !== 'undefined') {
+    go();
+  } else {
+    const scr = document.createElement('script');
+    scr.src = 'https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js';
+    scr.onload  = go;
+    scr.onerror = () => { btn.innerHTML = orig; btn.disabled = false; alert('Could not load the PowerPoint library. Try PDF instead.'); };
+    document.head.appendChild(scr);
+  }
+}
+</script>
+</body>
+</html>
