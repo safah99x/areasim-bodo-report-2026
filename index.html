@@ -342,14 +342,20 @@
       letter-spacing:-0.01em;
       max-width:640px; line-height:1.45;
     }
-    .cover-title-l1 { display:block; }
+    .cover-title-block {
+      text-align: justify;
+      text-align-last: left;
+    }
+    .cover-title-l1 {
+      display: inline;
+      font-style: normal;
+      color: inherit;
+    }
     .cover-title-l2 {
-      display:block;
-      margin-left:clamp(36px, 7vw, 108px);
-      margin-top:0.02em;
-      font-style:italic;
-      font-weight:300;
-      color:var(--g-dark);
+      display: inline;
+      font-style: italic;
+      font-weight: 300;
+      color: var(--g-dark);
     }
 
     .cover-meta {
@@ -1198,7 +1204,6 @@
       .export-pill { flex-wrap:wrap; justify-content:center; max-width:100%; }
       .xbtn { padding:8px 14px; font-size:10px; }
       .dow-row { grid-template-columns:70px 1fr 50px; gap:10px; }
-      .cover-title-l2 { margin-left:clamp(20px, 5vw, 48px); }
     }
   </style>
 </head>
@@ -1314,12 +1319,9 @@
       </div>
     </div>
 
-    <h1 class="h-display ai d2">
-      <span class="cover-title-l1">Bodø</span>
-      <span class="cover-title-l2">Municipality.</span>
-    </h1>
+    <h1 class="h-display cover-title-block ai d2"><span class="cover-title-l1">Bodø</span><br /><span class="cover-title-l2">Municipality.</span></h1>
 
-    <p class="cover-sub ai d3">The counting tool walked every floor so your next lease conversation opens with receipts, not folklore.</p>
+    <p class="cover-sub ai d3">Structured results of the counting program, prepared for leadership dialogue in which documented utilisation carries more weight than received wisdom.</p>
 
     <div class="cover-meta ai d4">
       <div class="cover-meta-item">
@@ -2764,7 +2766,7 @@ xmlns='http://www.w3.org/TR/REC-html40'>
 </style></head><body>
 <h1>AreaSim NEXT · Office Intelligence Report, 2026</h1>
 <p><b>Organization:</b> Bodø Municipality &nbsp; | &nbsp; <b>Period:</b> 8 to 22 May 2026 &nbsp; | &nbsp; <b>Snapshots:</b> 46</p>
-<p style="font-style:italic;color:#4A5950;font-size:12pt;margin-top:8pt;">The counting tool walked every floor so your next lease conversation opens with receipts, not folklore.</p>
+<p style="font-style:italic;color:#4A5950;font-size:12pt;margin-top:8pt;">Structured results of the counting program, prepared for leadership dialogue in which documented utilisation carries more weight than received wisdom.</p>
 
 <h2>The Building, at a Glance</h2>
 <table>
@@ -2869,7 +2871,7 @@ function exportPPT() {
     s1.addText('NEXT', { x: 2.2, y: 0.42, w: 2, h: 0.4, color: INK, fontSize: 11, bold: false, charSpacing: 2 });
     s1.addText('OFFICE INTELLIGENCE REPORT, 2026', { x: 0.5, y: 0.9, w: 9, h: 0.3, color: G_DARK, fontSize: 10, charSpacing: 2 });
     s1.addText('Bodø Municipality', { x: 0.5, y: 1.5, w: 11, h: 2.0, color: INK, fontSize: 72, bold: false });
-    s1.addText('The counting tool walked every floor so your next lease conversation opens with receipts, not folklore.', { x: 0.5, y: 3.75, w: 10, h: 1.0, color: INK2, fontSize: 18, italic: true, lineSpacingMultiple: 1.15 });
+    s1.addText('Structured results of the counting program, prepared for leadership dialogue in which documented utilisation carries more weight than received wisdom.', { x: 0.5, y: 3.75, w: 10, h: 1.0, color: INK2, fontSize: 18, italic: true, lineSpacingMultiple: 1.15 });
     s1.addShape(pptx.shapes.RECTANGLE, { x: 0.5, y: 5.5, w: 11, h: 0.02, fill: { color: G_DARK }, line: { color: G_DARK } });
     s1.addText('14 days  ·  46 snapshots  ·  6 floors  ·  370 employees', { x: 0.5, y: 5.65, w: 11, h: 0.4, color: INK3, fontSize: 12, charSpacing: 1 });
 
