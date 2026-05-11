@@ -71,16 +71,28 @@
       transition:width 0.15s linear;
     }
 
-    /* ──────────────── EXPORT PILL ──────────────── */
+    /* ──────────────── EXPORT BAR (aligned to content grid) ──────────────── */
+    .export-bar {
+      position:fixed; top:0; left:0; right:0; z-index:1500;
+      padding:18px clamp(32px, 8vw, 112px) 14px;
+      background:linear-gradient(180deg, rgba(250,247,242,0.98) 0%, rgba(250,247,242,0.92) 45%, rgba(250,247,242,0) 100%);
+      pointer-events:none;
+    }
+    .export-bar__inner {
+      max-width:1400px; margin:0 auto;
+      display:flex; justify-content:flex-end; align-items:center;
+      pointer-events:none;
+    }
     .export-pill {
-      position:fixed; top:24px; right:24px; z-index:1500;
-      display:flex; align-items:center; gap:4px;
-      background:rgba(255,255,255,0.92);
+      position:relative;
+      display:inline-flex; align-items:center; gap:4px;
+      background:rgba(255,255,255,0.94);
       backdrop-filter:blur(16px) saturate(1.6);
       border:1px solid var(--line);
       border-radius:100px;
       padding:5px;
       box-shadow:var(--shadow-md);
+      pointer-events:auto;
     }
     .pill-sep { width:1px; height:20px; background:var(--line); margin:0 2px; }
     .xbtn {
@@ -264,9 +276,18 @@
     .callout strong { color:var(--g-dark); font-weight:600; }
 
     /* ──────────────── COVER ──────────────── */
+    .cover-header {
+      display:flex; flex-wrap:wrap;
+      align-items:center; gap:14px 18px;
+      margin-bottom:52px;
+    }
+    .cover-header__brand {
+      display:flex; flex-wrap:wrap;
+      align-items:center; gap:12px 16px;
+    }
     .cover-brand {
       display:inline-flex; align-items:center; gap:12px;
-      margin-bottom:64px;
+      margin-bottom:0;
     }
     .cover-brand .brand-name {
       font-family:'Inter', sans-serif;
@@ -283,7 +304,8 @@
       font-size:12px; font-weight:500;
       color:var(--g-dark);
       letter-spacing:0.02em;
-      margin-bottom:32px;
+      margin-bottom:0;
+      flex-shrink:0;
     }
     .cover-tag .dot {
       width:6px; height:6px; border-radius:50%;
@@ -301,8 +323,18 @@
       font-weight:300;
       font-size:clamp(20px, 2.4vw, 32px);
       color:var(--ink-2);
-      margin-top:20px;
+      margin-top:24px;
       letter-spacing:-0.01em;
+      max-width:640px; line-height:1.45;
+    }
+    .cover-title-l1 { display:block; }
+    .cover-title-l2 {
+      display:block;
+      margin-left:clamp(36px, 7vw, 108px);
+      margin-top:0.02em;
+      font-style:italic;
+      font-weight:300;
+      color:var(--g-dark);
     }
 
     .cover-meta {
@@ -1116,7 +1148,7 @@
 
     /* ──────────────── PRINT ──────────────── */
     @media print {
-      .export-pill, #navdots, #topbar, .scroll-hint, #loader { display:none !important; }
+      .export-bar, #navdots, #topbar, .scroll-hint, #loader { display:none !important; }
       .section { page-break-after:always; min-height:100vh; }
     }
 
@@ -1140,9 +1172,15 @@
       .section { padding:96px 24px; }
       .stat-grid { grid-template-columns:1fr 1fr; }
       .floor-grid { grid-template-columns:repeat(2, 1fr); }
-      .export-pill { top:auto; bottom:16px; right:50%; transform:translateX(50%); }
-      .xbtn { padding:7px 12px; font-size:10px; }
+      .export-bar {
+        padding:12px 16px 10px;
+        background:rgba(250,247,242,0.97);
+      }
+      .export-bar__inner { justify-content:center; }
+      .export-pill { flex-wrap:wrap; justify-content:center; max-width:100%; }
+      .xbtn { padding:8px 14px; font-size:10px; }
       .dow-row { grid-template-columns:70px 1fr 50px; gap:10px; }
+      .cover-title-l2 { margin-left:clamp(20px, 5vw, 48px); }
     }
   </style>
 </head>
@@ -1164,34 +1202,38 @@
 <!-- ============================== TOP BAR ============================== -->
 <div id="topbar"></div>
 
-<!-- ============================== EXPORT ============================== -->
-<div class="export-pill">
-  <button class="xbtn xbtn-primary" onclick="exportPDF()">
-    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M3 12v1a1 1 0 001 1h8a1 1 0 001-1v-1"/>
-      <path d="M5 7l3 3 3-3"/>
-      <path d="M8 10V2"/>
-    </svg>
-    PDF
-  </button>
-  <div class="pill-sep"></div>
-  <button class="xbtn" onclick="exportDOC()">
-    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M3 12v1a1 1 0 001 1h8a1 1 0 001-1v-1"/>
-      <path d="M5 7l3 3 3-3"/>
-      <path d="M8 10V2"/>
-    </svg>
-    DOC
-  </button>
-  <div class="pill-sep"></div>
-  <button class="xbtn" onclick="exportPPT()">
-    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M3 12v1a1 1 0 001 1h8a1 1 0 001-1v-1"/>
-      <path d="M5 7l3 3 3-3"/>
-      <path d="M8 10V2"/>
-    </svg>
-    PPT
-  </button>
+<!-- ============================== EXPORT (grid-aligned) ============================== -->
+<div class="export-bar">
+  <div class="export-bar__inner">
+    <div class="export-pill">
+      <button type="button" class="xbtn xbtn-primary" onclick="exportPDF()">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M3 12v1a1 1 0 001 1h8a1 1 0 001-1v-1"/>
+          <path d="M5 7l3 3 3-3"/>
+          <path d="M8 10V2"/>
+        </svg>
+        PDF
+      </button>
+      <div class="pill-sep"></div>
+      <button type="button" class="xbtn" onclick="exportDOC()">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M3 12v1a1 1 0 001 1h8a1 1 0 001-1v-1"/>
+          <path d="M5 7l3 3 3-3"/>
+          <path d="M8 10V2"/>
+        </svg>
+        DOC
+      </button>
+      <div class="pill-sep"></div>
+      <button type="button" class="xbtn" onclick="exportPPT()">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M3 12v1a1 1 0 001 1h8a1 1 0 001-1v-1"/>
+          <path d="M5 7l3 3 3-3"/>
+          <path d="M8 10V2"/>
+        </svg>
+        PPT
+      </button>
+    </div>
+  </div>
 </div>
 
 <!-- ============================== NAV DOTS ============================== -->
@@ -1201,30 +1243,33 @@
 <!-- ════════════════════════════════════════════════════
      01 · COVER
 ════════════════════════════════════════════════════ -->
-<section class="section bg-cream grid-pattern" id="s1" data-label="Cover">
+<section class="section bg-cream grid-pattern" id="s1" data-label="Cover" style="padding-top:132px;">
   <div class="glow" style="width:500px;height:500px;background:rgba(184,212,197,0.4);right:-150px;top:-150px;"></div>
   <div class="glow" style="width:400px;height:400px;background:rgba(245,235,212,0.5);left:-100px;bottom:-100px;"></div>
 
   <div class="si">
-    <div class="cover-brand ai">
-      <svg width="32" height="36" viewBox="0 0 32 36" fill="none">
-        <path d="M16 2 L30 32 L2 32 Z" fill="none" stroke="#1F5C44" stroke-width="2" stroke-linejoin="round"/>
-        <circle cx="16" cy="25" r="3.5" fill="#C99A3D"/>
-      </svg>
-      <span class="brand-name">AreaSim</span>
-    </div>
-
-    <div class="cover-tag ai d1">
-      <span class="dot"></span>
-      Office Intelligence Report, 2026
+    <div class="cover-header ai d1">
+      <div class="cover-header__brand">
+        <div class="cover-brand">
+          <svg width="32" height="36" viewBox="0 0 32 36" fill="none" aria-hidden="true" style="flex-shrink:0;">
+            <path d="M16 2 L30 32 L2 32 Z" fill="none" stroke="#1F5C44" stroke-width="2" stroke-linejoin="round"/>
+            <circle cx="16" cy="25" r="3.5" fill="#C99A3D"/>
+          </svg>
+          <span class="brand-name">AreaSim</span>
+        </div>
+        <div class="cover-tag">
+          <span class="dot"></span>
+          Office Intelligence Report, 2026
+        </div>
+      </div>
     </div>
 
     <h1 class="h-display ai d2">
-      Bodø<br>
-      <span class="italic">Municipality.</span>
+      <span class="cover-title-l1">Bodø</span>
+      <span class="cover-title-l2">Municipality.</span>
     </h1>
 
-    <p class="cover-sub ai d3">Your office. Counted, considered, unwrapped.</p>
+    <p class="cover-sub ai d3">The counting tool walked every floor so your next lease conversation opens with receipts, not folklore.</p>
 
     <div class="cover-meta ai d4">
       <div class="cover-meta-item">
@@ -2653,6 +2698,7 @@ xmlns='http://www.w3.org/TR/REC-html40'>
 </style></head><body>
 <h1>AreaSim Office Intelligence Report, 2026</h1>
 <p><b>Organization:</b> Bodø Municipality &nbsp; | &nbsp; <b>Period:</b> 8 to 22 May 2026 &nbsp; | &nbsp; <b>Snapshots:</b> 46</p>
+<p style="font-style:italic;color:#4A5950;font-size:12pt;margin-top:8pt;">The counting tool walked every floor so your next lease conversation opens with receipts, not folklore.</p>
 
 <h2>The Building, at a Glance</h2>
 <table>
@@ -2755,7 +2801,7 @@ function exportPPT() {
     s1.addText('AreaSim', { x: 0.5, y: 0.4, w: 3, h: 0.4, color: INK, fontSize: 14, bold: true });
     s1.addText('OFFICE INTELLIGENCE REPORT, 2026', { x: 0.5, y: 0.9, w: 9, h: 0.3, color: G_DARK, fontSize: 10, charSpacing: 2 });
     s1.addText('Bodø Municipality', { x: 0.5, y: 1.5, w: 11, h: 2.0, color: INK, fontSize: 72, bold: false });
-    s1.addText('Your office. Counted, considered, unwrapped.', { x: 0.5, y: 3.8, w: 11, h: 0.6, color: INK2, fontSize: 22, italic: true });
+    s1.addText('The counting tool walked every floor so your next lease conversation opens with receipts, not folklore.', { x: 0.5, y: 3.75, w: 10, h: 1.0, color: INK2, fontSize: 18, italic: true, lineSpacingMultiple: 1.15 });
     s1.addShape(pptx.shapes.RECTANGLE, { x: 0.5, y: 5.5, w: 11, h: 0.02, fill: { color: G_DARK }, line: { color: G_DARK } });
     s1.addText('14 days  ·  46 snapshots  ·  6 floors  ·  370 employees', { x: 0.5, y: 5.65, w: 11, h: 0.4, color: INK3, fontSize: 12, charSpacing: 1 });
 
